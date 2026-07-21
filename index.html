@@ -1,2010 +1,1805 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FMS Client Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg-primary: #fcfaf6;
-        --bg-secondary: #f4efe6;
-        --bg-card: #ffffff;
-        --bg-card-hover: #fcfbf7;
-        --accent-blue: #c87d55;
-        --accent-blue-light: #dd926b;
-        --accent-green: #608066;
-        --accent-amber: #bfa15f;
-        --accent-red: #b85a5a;
-        --accent-purple: #84697c;
-        --text-primary: #2c2520;
-        --text-secondary: #6e625a;
-        --text-muted: #9c8e85;
-        --border: rgba(110, 98, 90, 0.12);
-        --border-accent: rgba(200, 125, 85, 0.4);
-        --glass: rgba(255, 255, 255, 0.85);
-        --shadow-card: 0 4px 20px rgba(110, 98, 90, 0.08);
-        --shadow-glow-blue: 0 0 20px rgba(200, 125, 85, 0.1);
-        --radius: 12px;
-        --radius-lg: 16px;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: "Inter", sans-serif;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-      .screen {
-        display: none;
-        min-height: 100vh;
-      }
-      .screen.active {
-        display: flex;
-      }
-      #screen-login {
-        align-items: center;
-        justify-content: center;
-        background:
-          radial-gradient(
-            ellipse at 30% 20%,
-            rgba(37, 99, 235, 0.15) 0%,
-            transparent 60%
-          ),
-          radial-gradient(
-            ellipse at 70% 80%,
-            rgba(139, 92, 246, 0.1) 0%,
-            transparent 60%
-          ),
-          var(--bg-primary);
-      }
-      .login-box {
-        background: var(--glass);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 48px 40px;
-        width: 100%;
-        max-width: 420px;
-        backdrop-filter: blur(20px);
-        box-shadow: var(--shadow-card), var(--shadow-glow-blue);
-      }
-      .login-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 32px;
-      }
-      .logo-icon {
-        width: 44px;
-        height: 44px;
-        background: linear-gradient(
-          135deg,
-          var(--accent-blue),
-          var(--accent-purple)
-        );
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-      }
-      .login-logo h1 {
-        font-size: 22px;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-      }
-      .login-logo span {
-        font-size: 11px;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        display: block;
-      }
-      .role-tabs {
-        display: flex;
-        background: rgba(255, 255, 255, 0.04);
-        border-radius: 8px;
-        padding: 4px;
-        margin-bottom: 28px;
-        border: 1px solid var(--border);
-      }
-      .role-tab {
-        flex: 1;
-        padding: 8px;
-        border: none;
-        background: transparent;
-        color: var(--text-muted);
-        cursor: pointer;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.2s;
-        font-family: "Inter", sans-serif;
-      }
-      .role-tab.active {
-        background: var(--accent-blue);
-        color: white;
-      }
-      .form-group {
-        margin-bottom: 16px;
-      }
-      .form-group label {
-        display: block;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--text-secondary);
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-      }
-      .form-group input,
-      .form-group select,
-      .form-group textarea {
-        width: 100%;
-        padding: 12px 14px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text-primary);
-        font-size: 14px;
-        font-family: "Inter", sans-serif;
-        transition: border-color 0.2s;
-        outline: none;
-      }
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus {
-        border-color: var(--accent-blue);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-      }
-      .form-group select option {
-        background: #132038;
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-family: "Inter", sans-serif;
-      }
-      .btn-primary {
-        background: var(--accent-blue);
-        color: white;
-        width: 100%;
-        margin-top: 8px;
-      }
-      .btn-primary:hover {
-        background: var(--accent-blue-light);
-        transform: translateY(-1px);
-      }
-      .btn-sm {
-        padding: 7px 14px;
-        font-size: 12px;
-        border-radius: 6px;
-      }
-      .btn-ghost {
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-      }
-      .btn-ghost:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      .login-hint {
-        margin-top: 20px;
-        padding: 12px;
-        background: rgba(37, 99, 235, 0.08);
-        border: 1px solid rgba(37, 99, 235, 0.2);
-        border-radius: 8px;
-        font-size: 12px;
-        color: var(--text-muted);
-        line-height: 1.6;
-      }
-      .login-hint code {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 1px 5px;
-        border-radius: 4px;
-        font-family: "JetBrains Mono", monospace;
-      }
-      #screen-admin {
-        flex-direction: row;
-      }
-      .sidebar {
-        width: 240px;
-        min-height: 100vh;
-        background: var(--bg-secondary);
-        border-right: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        padding: 24px 16px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-      }
-      .sidebar-logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0 8px 24px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 24px;
-      }
-      .sidebar-logo .logo-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-      }
-      .sidebar-logo h2 {
-        font-size: 15px;
-        font-weight: 700;
-      }
-      .sidebar-logo span {
-        font-size: 10px;
-        color: var(--text-muted);
-      }
-      .nav-section-label {
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        padding: 0 8px;
-        margin-bottom: 6px;
-      }
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        color: var(--text-secondary);
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.15s;
-        margin-bottom: 2px;
-        border: none;
-        background: transparent;
-        width: 100%;
-        text-align: left;
-        font-family: "Inter", sans-serif;
-      }
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
-      }
-      .nav-item.active {
-        background: rgba(37, 99, 235, 0.15);
-        color: var(--accent-blue-light);
-      }
-      .nav-item .nav-icon {
-        font-size: 15px;
-        width: 18px;
-        text-align: center;
-      }
-      .sidebar-footer {
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid var(--border);
-      }
-      .admin-badge {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 12px;
-        background: rgba(37, 99, 235, 0.1);
-        border-radius: 8px;
-        font-size: 12px;
-        color: var(--accent-blue-light);
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-      .main-content {
-        flex: 1;
-        padding: 32px;
-        overflow-y: auto;
-        max-height: 100vh;
-      }
-      .admin-page {
-        display: none;
-      }
-      .admin-page.active {
-        display: block;
-      }
-      .page-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 28px;
-      }
-      .page-header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-      }
-      .page-header p {
-        color: var(--text-muted);
-        font-size: 13px;
-        margin-top: 4px;
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-        margin-bottom: 28px;
-      }
-      .stat-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 20px;
-        position: relative;
-        overflow: hidden;
-      }
-      .stat-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        border-radius: var(--radius) var(--radius) 0 0;
-      }
-      .stat-card.blue::before {
-        background: var(--accent-blue);
-      }
-      .stat-card.green::before {
-        background: var(--accent-green);
-      }
-      .stat-card.amber::before {
-        background: var(--accent-amber);
-      }
-      .stat-card.purple::before {
-        background: var(--accent-purple);
-      }
-      .stat-label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-muted);
-        margin-bottom: 10px;
-      }
-      .stat-value {
-        font-size: 36px;
-        font-weight: 800;
-        letter-spacing: -1px;
-        line-height: 1;
-        margin-bottom: 4px;
-      }
-      .stat-value.blue {
-        color: var(--accent-blue-light);
-      }
-      .stat-value.green {
-        color: var(--accent-green);
-      }
-      .stat-value.amber {
-        color: var(--accent-amber);
-      }
-      .stat-value.purple {
-        color: var(--accent-purple);
-      }
-      .stat-sublabel {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-      .stat-edit-btn {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 26px;
-        height: 26px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 11px;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-      }
-      .stat-edit-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-primary);
-      }
-      .client-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 16px;
-      }
-      .client-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 20px;
-        cursor: pointer;
-        transition: all 0.25s;
-        position: relative;
-        overflow: hidden;
-      }
-      .client-card:hover {
-        border-color: var(--border-accent);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-glow-blue), var(--shadow-card);
-      }
-      .client-card-header {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        margin-bottom: 16px;
-      }
-      .client-avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-      /* Logo image inside avatar area */
-      .client-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 10px;
-      }
-      .client-card-info h3 {
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 2px;
-      }
-      .client-card-info p {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-      .client-id {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        color: var(--text-muted);
-        background: rgba(255, 255, 255, 0.04);
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-top: 4px;
-        display: inline-block;
-      }
-      .card-status {
-        margin-left: auto;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
-      .status-active {
-        background: rgba(16, 185, 129, 0.15);
-        color: var(--accent-green);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-      }
-      .status-pending {
-        background: rgba(245, 158, 11, 0.15);
-        color: var(--accent-amber);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-      }
-      .status-completed {
-        background: rgba(139, 92, 246, 0.15);
-        color: var(--accent-purple);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-      }
-      .fms-mini {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 14px;
-        flex-wrap: wrap;
-      }
-      .fms-step-dot {
-        height: 4px;
-        flex: 1;
-        border-radius: 2px;
-        min-width: 20px;
-        background: rgba(255, 255, 255, 0.08);
-      }
-      .fms-step-dot.done {
-        background: var(--accent-green);
-      }
-      .fms-step-dot.active {
-        background: var(--accent-blue);
-      }
-      .card-footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 12px;
-        color: var(--text-muted);
-        border-top: 1px solid var(--border);
-        padding-top: 12px;
-      }
-      .lock-badge {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-      }
-      .sync-bar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-        background: rgba(37, 99, 235, 0.06);
-        border: 1px solid rgba(37, 99, 235, 0.15);
-        border-radius: 8px;
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-bottom: 20px;
-      }
-      .sync-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--accent-green);
-        flex-shrink: 0;
-      }
-      .sync-dot.spin {
-        background: var(--accent-amber);
-        animation: blink 1s infinite;
-      }
-      .sync-dot.err {
-        background: var(--accent-red);
-      }
-      @keyframes blink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.3;
-        }
-      }
-      .loading-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--text-muted);
-      }
-      .spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid var(--border);
-        border-top-color: var(--accent-blue);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 14px;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      #screen-client-detail {
-        flex-direction: column;
-      }
-      .detail-header {
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border);
-        padding: 20px 32px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-      .back-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 13px;
-        cursor: pointer;
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        font-family: "Inter", sans-serif;
-        transition: color 0.2s;
-      }
-      .back-btn:hover {
-        color: var(--text-primary);
-      }
-      .detail-title {
-        font-size: 18px;
-        font-weight: 700;
-      }
-      .detail-subtitle {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
-      .detail-body {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 0;
-        flex: 1;
-        overflow: hidden;
-      }
-      .detail-main {
-        padding: 28px;
-        overflow-y: auto;
-      }
-      .detail-sidebar {
-        border-left: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-      .fms-timeline {
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        padding-left: 32px;
-      }
-      .fms-timeline::before {
-        content: "";
-        position: absolute;
-        left: 11px;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: var(--border);
-      }
-      .fms-timeline-item {
-        position: relative;
-        padding-bottom: 24px;
-      }
-      .fms-timeline-item:last-child {
-        padding-bottom: 0;
-      }
-      .fms-dot {
-        position: absolute;
-        left: -25px;
-        top: 0;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        border: 2px solid var(--border);
-        background: var(--bg-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 9px;
-        z-index: 1;
-      }
-      .fms-dot.done {
-        background: var(--accent-green);
-        border-color: var(--accent-green);
-        color: white;
-      }
-      .fms-dot.active {
-        background: var(--accent-blue);
-        border-color: var(--accent-blue);
-        color: white;
-        animation: pulse-ring 2s infinite;
-      }
-      .fms-dot.pending {
-        background: var(--bg-card);
-        border-color: var(--border);
-        color: var(--text-muted);
-      }
-      @keyframes pulse-ring {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
-        }
-      }
-      .fms-content {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 14px 16px;
-      }
-      .fms-content.active-step {
-        border-color: var(--accent-blue);
-        box-shadow: var(--shadow-glow-blue);
-      }
-      .fms-content.done-step {
-        border-color: rgba(16, 185, 129, 0.3);
-      }
-      .fms-step-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 4px;
-      }
-      .fms-step-name {
-        font-size: 14px;
-        font-weight: 600;
-      }
-      .fms-step-badge {
-        font-size: 10px;
-        padding: 2px 8px;
-        border-radius: 20px;
-        font-weight: 600;
-      }
-      .badge-done {
-        background: rgba(16, 185, 129, 0.15);
-        color: var(--accent-green);
-      }
-      .badge-active {
-        background: rgba(37, 99, 235, 0.15);
-        color: var(--accent-blue-light);
-      }
-      .badge-pending {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-muted);
-      }
-      .fms-step-num-lbl {
-        font-size: 10px;
-        color: var(--text-muted);
-        font-family: "JetBrains Mono", monospace;
-        margin-bottom: 5px;
-      }
-      .doc-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .doc-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 14px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        transition: all 0.2s;
-        text-decoration: none;
-        color: inherit;
-      }
-      .doc-item:hover {
-        border-color: var(--border-accent);
-        background: var(--bg-card-hover);
-      }
-      a.doc-item {
-        cursor: pointer;
-      }
-      .doc-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-      .doc-info {
-        flex: 1;
-      }
-      .doc-name {
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 2px;
-        color: var(--text-primary);
-      }
-      .doc-meta {
-        font-size: 11px;
-        color: var(--text-muted);
-      }
-      .doc-viewer-badge {
-        font-size: 10px;
-        padding: 2px 8px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        color: var(--text-muted);
-        white-space: nowrap;
-      }
-      .doc-section-label {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-muted);
-        margin: 4px 0 10px;
-      }
-      .doc-section-label:not(:first-child) {
-        margin-top: 22px;
-      }
-      .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 24px;
-      }
-      .info-item {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 12px 14px;
-      }
-      .info-label {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-muted);
-        margin-bottom: 4px;
-      }
-      .info-value {
-        font-size: 14px;
-        font-weight: 500;
-        word-break: break-word;
-      }
-      .messages-panel {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
-      }
-      .messages-header {
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--border);
-        font-size: 13px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .messages-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .message-bubble {
-        max-width: 85%;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-      }
-      .message-bubble.admin {
-        align-self: flex-start;
-      }
-      .message-bubble.client {
-        align-self: flex-end;
-      }
-      .bubble-sender {
-        font-size: 10px;
-        color: var(--text-muted);
-        padding: 0 4px;
-      }
-      .bubble-text {
-        padding: 9px 13px;
-        border-radius: 12px;
-        font-size: 13px;
-        line-height: 1.5;
-      }
-      .message-bubble.admin .bubble-text {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid var(--border);
-        border-bottom-left-radius: 4px;
-      }
-      .message-bubble.client .bubble-text {
-        background: var(--accent-blue);
-        color: white;
-        border-bottom-right-radius: 4px;
-      }
-      .bubble-time {
-        font-size: 10px;
-        color: var(--text-muted);
-        padding: 0 4px;
-        text-align: right;
-      }
-      .message-bubble.admin .bubble-time {
-        text-align: left;
-      }
-      .messages-input {
-        padding: 12px 16px;
-        border-top: 1px solid var(--border);
-        display: flex;
-        gap: 8px;
-        align-items: flex-end;
-      }
-      .messages-input textarea {
-        flex: 1;
-        resize: none;
-        min-height: 36px;
-        max-height: 80px;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text-primary);
-        font-size: 13px;
-        font-family: "Inter", sans-serif;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      .messages-input textarea:focus {
-        border-color: var(--accent-blue);
-      }
-      .send-btn {
-        width: 36px;
-        height: 36px;
-        background: var(--accent-blue);
-        border: none;
-        border-radius: 8px;
-        color: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        flex-shrink: 0;
-        transition: background 0.2s;
-      }
-      .send-btn:hover {
-        background: var(--accent-blue-light);
-      }
-      .msg-readonly-note {
-        padding: 10px 16px;
-        background: rgba(245, 158, 11, 0.06);
-        border-top: 1px solid rgba(245, 158, 11, 0.15);
-        font-size: 11px;
-        color: var(--text-muted);
-        text-align: center;
-      }
-      #screen-client {
-        flex-direction: column;
-        background:
-          radial-gradient(
-            ellipse at 20% 0%,
-            rgba(37, 99, 235, 0.1) 0%,
-            transparent 50%
-          ),
-          var(--bg-primary);
-      }
-      .portal-header {
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border);
-        padding: 16px 32px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .portal-logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .portal-logo h1 {
-        font-size: 16px;
-        font-weight: 700;
-      }
-      .portal-user {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 13px;
-        color: var(--text-secondary);
-      }
-      .portal-user .avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 12px;
-        overflow: hidden;
-      }
-      .portal-user .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-      /* Client logo banner shown at top of portal */
-      .portal-client-logo-banner {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 28px;
-        padding: 16px 20px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-      }
-      .portal-client-logo-banner img {
-        height: 52px;
-        max-width: 160px;
-        object-fit: contain;
-        border-radius: 6px;
-      }
-      .portal-client-logo-banner .logo-fallback {
-        width: 52px;
-        height: 52px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 20px;
-      }
-      .portal-client-logo-banner .banner-text h3 {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 2px;
-      }
-      .portal-client-logo-banner .banner-text p {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-      .portal-body {
-        flex: 1;
-        padding: 32px;
-        max-width: 1100px;
-        width: 100%;
-        margin: 0 auto;
-      }
-      .portal-welcome {
-        margin-bottom: 20px;
-      }
-      .portal-welcome h2 {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      .portal-welcome p {
-        color: var(--text-muted);
-        font-size: 14px;
-      }
-      .cards-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 16px;
-      }
-      .portal-card {
-        border-radius: var(--radius-lg);
-        padding: 20px;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.25s;
-      }
-      .portal-card.locked {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        cursor: default;
-        opacity: 0.55;
-      }
-      .portal-card.unlocked {
-        background: var(--bg-card);
-        border: 1px solid var(--border-accent);
-        cursor: pointer;
-        box-shadow: var(--shadow-glow-blue);
-      }
-      .portal-card.unlocked:hover {
-        transform: translateY(-2px);
-        border-color: var(--accent-blue-light);
-        box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
-      }
-      .lock-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(10, 22, 40, 0.7);
-        backdrop-filter: blur(2px);
-        border-radius: var(--radius-lg);
-        gap: 8px;
-      }
-      .lock-icon {
-        font-size: 28px;
-      }
-      .lock-text {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-      #screen-client-card {
-        flex-direction: column;
-      }
-      .tab-bar {
-        display: flex;
-        gap: 4px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 4px;
-        margin-bottom: 20px;
-        width: fit-content;
-      }
-      .tab {
-        padding: 7px 16px;
-        border: none;
-        background: transparent;
-        color: var(--text-muted);
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        font-family: "Inter", sans-serif;
-        transition: all 0.2s;
-      }
-      .tab.active {
-        background: var(--accent-blue);
-        color: white;
-      }
-      .tab:hover:not(.active) {
-        color: var(--text-primary);
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .tab-panel {
-        display: none;
-      }
-      .tab-panel.active {
-        display: block;
-      }
-      .empty-state {
-        text-align: center;
-        padding: 48px 20px;
-        color: var(--text-muted);
-      }
-      .empty-state .ei {
-        font-size: 40px;
-        margin-bottom: 12px;
-      }
-      .viewer-notice {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 12px;
-        background: rgba(245, 158, 11, 0.08);
-        border: 1px solid rgba(245, 158, 11, 0.2);
-        border-radius: 8px;
-        font-size: 12px;
-        color: var(--accent-amber);
-        margin-bottom: 16px;
-      }
-      .toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 9999;
-        transform: translateY(80px);
-        opacity: 0;
-        transition: all 0.3s;
-        box-shadow: var(--shadow-card);
-      }
-      .toast.show {
-        transform: translateY(0);
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FMS Client Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #fcfaf6;
+      --bg-secondary: #f4efe6;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fcfbf7;
+      --accent-blue: #c87d55;
+      --accent-blue-light: #dd926b;
+      --accent-green: #608066;
+      --accent-amber: #bfa15f;
+      --accent-red: #b85a5a;
+      --accent-purple: #84697c;
+      --text-primary: #2c2520;
+      --text-secondary: #6e625a;
+      --text-muted: #9c8e85;
+      --border: rgba(110, 98, 90, 0.12);
+      --border-accent: rgba(200, 125, 85, 0.4);
+      --glass: rgba(255, 255, 255, 0.85);
+      --shadow-card: 0 4px 20px rgba(110, 98, 90, 0.08);
+      --shadow-glow-blue: 0 0 20px rgba(200, 125, 85, 0.1);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    #screen-login {
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 60%), var(--bg-primary);
+    }
+
+    .login-box {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card), var(--shadow-glow-blue);
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .login-logo h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .login-logo span {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: block;
+    }
+
+    .role-tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      font-family: "Inter", sans-serif;
+    }
+
+    .role-tab.active {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: "Inter", sans-serif;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: "Inter", sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      color: white;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-blue-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #screen-admin {
+      flex-direction: row;
+    }
+
+    .sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 8px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .sidebar-logo .logo-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+    }
+
+    .sidebar-logo h2 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .sidebar-logo span {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: "Inter", sans-serif;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--accent-blue-light);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(37, 99, 235, 0.1);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--accent-blue-light);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .admin-page {
+      display: none;
+    }
+
+    .admin-page.active {
+      display: block;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .stat-card.blue::before {
+      background: var(--accent-blue);
+    }
+
+    .stat-card.green::before {
+      background: var(--accent-green);
+    }
+
+    .stat-card.amber::before {
+      background: var(--accent-amber);
+    }
+
+    .stat-card.purple::before {
+      background: var(--accent-purple);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-value.blue {
+      color: var(--accent-blue-light);
+    }
+
+    .stat-value.green {
+      color: var(--accent-green);
+    }
+
+    .stat-value.amber {
+      color: var(--accent-amber);
+    }
+
+    .stat-value.purple {
+      color: var(--accent-purple);
+    }
+
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .client-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .client-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-blue), var(--shadow-card);
+    }
+
+    .client-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .client-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .client-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    .client-card-info h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .client-card-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .client-id {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    .card-status {
+      margin-left: auto;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .status-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .status-completed {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .fms-mini {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .fms-step-dot {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      min-width: 20px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .fms-step-dot.done {
+      background: var(--accent-green);
+    }
+
+    .fms-step-dot.active {
+      background: var(--accent-blue);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .lock-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .sync-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(37, 99, 235, 0.06);
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      flex-shrink: 0;
+    }
+
+    .sync-dot.spin {
+      background: var(--accent-amber);
+      animation: blink 1s infinite;
+    }
+
+    .sync-dot.err {
+      background: var(--accent-red);
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
         opacity: 1;
       }
-      .toast.success {
-        border-color: rgba(16, 185, 129, 0.4);
-      }
-      .toast.error {
-        border-color: rgba(239, 68, 68, 0.4);
-      }
-      .badge-count {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 18px;
-        height: 18px;
-        border-radius: 9px;
-        background: var(--accent-blue);
-        color: white;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 0 4px;
-      }
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(4px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .modal-overlay.open {
-        display: flex;
-      }
-      .modal-box {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 32px;
-        width: 100%;
-        max-width: 400px;
-        position: relative;
-      }
-      .modal-box h2 {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      .modal-sub {
-        font-size: 13px;
-        color: var(--text-muted);
-        margin-bottom: 24px;
-      }
-      .modal-close {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        width: 28px;
-        height: 28px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .modal-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 24px;
-        justify-content: flex-end;
-      }
-      ::-webkit-scrollbar {
-        width: 4px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 2px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- LOGIN -->
-    <div id="screen-login" class="screen active">
-      <div class="login-box">
-        <div class="login-logo">
-          <div class="logo-icon">⚡</div>
-          <div>
-            <h1>Dashboard</h1>
-            <span></span>
-          </div>
-        </div>
-        <div class="role-tabs">
-          <button class="role-tab active" onclick="setRole('admin', this)">
-            Admin
-          </button>
-          <button class="role-tab" onclick="setRole('client', this)">
-            Client
-          </button>
-        </div>
-        <div class="form-group">
-          <label>Username / Client ID</label>
-          <input
-            type="text"
-            id="lu"
-            placeholder="admin  or  CLT-001"
-            onkeydown="if (event.key === 'Enter') doLogin();"
-          />
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            id="lp"
-            placeholder="Password"
-            onkeydown="if (event.key === 'Enter') doLogin();"
-          />
-        </div>
-        <button class="btn btn-primary" onclick="doLogin()">Sign In →</button>
-        <!-- <div class="login-hint" id="lhint">
-          <strong>Admin:</strong> username <code>admin</code> / password
-          <code>admin123</code><br />
-          <strong>Client:</strong> Use Client ID (e.g. <code>CLT-001</code>) and
-          password set by admin.
-        </div> -->
-      </div>
-    </div>
 
-    <!-- ADMIN -->
-    <div id="screen-admin" class="screen">
-      <nav class="sidebar">
-        <div class="sidebar-logo">
-          <div class="logo-icon">⚡</div>
-          <div>
-            <h2>FMS Portal</h2>
-            <span>Admin Panel</span>
-          </div>
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    #screen-client-detail {
+      flex-direction: column;
+    }
+
+    .detail-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: "Inter", sans-serif;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .detail-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .detail-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .detail-body {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .detail-main {
+      padding: 28px;
+      overflow-y: auto;
+    }
+
+    .detail-sidebar {
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .fms-timeline {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .fms-timeline::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .fms-timeline-item {
+      position: relative;
+      padding-bottom: 24px;
+    }
+
+    .fms-timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .fms-dot {
+      position: absolute;
+      left: -25px;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      z-index: 1;
+    }
+
+    .fms-dot.done {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: white;
+    }
+
+    .fms-dot.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: white;
+      animation: pulse-ring 2s infinite;
+    }
+
+    .fms-dot.pending {
+      background: var(--bg-card);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    @keyframes pulse-ring {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+      }
+    }
+
+    .fms-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .fms-content.active-step {
+      border-color: var(--accent-blue);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .fms-content.done-step {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .fms-step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .fms-step-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .fms-step-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .badge-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+    }
+
+    .badge-active {
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--accent-blue-light);
+    }
+
+    .badge-pending {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .fms-step-num-lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: "JetBrains Mono", monospace;
+      margin-bottom: 5px;
+    }
+
+    .doc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .doc-item:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+
+    a.doc-item {
+      cursor: pointer;
+    }
+
+    .doc-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .doc-info {
+      flex: 1;
+    }
+
+    .doc-name {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 2px;
+      color: var(--text-primary);
+    }
+
+    .doc-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .doc-viewer-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .doc-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin: 4px 0 10px;
+    }
+
+    .doc-section-label:not(:first-child) {
+      margin-top: 22px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .info-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .info-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .messages-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .messages-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .messages-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message-bubble {
+      max-width: 85%;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .message-bubble.admin {
+      align-self: flex-start;
+    }
+
+    .message-bubble.client {
+      align-self: flex-end;
+    }
+
+    .bubble-sender {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .bubble-text {
+      padding: 9px 13px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message-bubble.admin .bubble-text {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-bubble.client .bubble-text {
+      background: var(--accent-blue);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 0 4px;
+      text-align: right;
+    }
+
+    .message-bubble.admin .bubble-time {
+      text-align: left;
+    }
+
+    .messages-input {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .messages-input textarea {
+      flex: 1;
+      resize: none;
+      min-height: 36px;
+      max-height: 80px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: "Inter", sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .messages-input textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-blue);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover {
+      background: var(--accent-blue-light);
+    }
+
+    .msg-readonly-note {
+      padding: 10px 16px;
+      background: rgba(245, 158, 11, 0.06);
+      border-top: 1px solid rgba(245, 158, 11, 0.15);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    #screen-client {
+      flex-direction: column;
+      background: radial-gradient(ellipse at 20% 0%, rgba(37, 99, 235, 0.1) 0%, transparent 50%), var(--bg-primary);
+    }
+
+    .portal-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .portal-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .portal-logo h1 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .portal-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .portal-user .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    .portal-user .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .portal-client-logo-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .portal-client-logo-banner img {
+      height: 52px;
+      max-width: 160px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .portal-client-logo-banner .logo-fallback {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .portal-client-logo-banner .banner-text h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .portal-client-logo-banner .banner-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .portal-body {
+      flex: 1;
+      padding: 32px;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .portal-welcome {
+      margin-bottom: 20px;
+    }
+
+    .portal-welcome h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .portal-welcome p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .cards-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .portal-card {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+
+    .portal-card.locked {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    .portal-card.unlocked {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      cursor: pointer;
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .portal-card.unlocked:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-blue-light);
+      box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 22, 40, 0.7);
+      backdrop-filter: blur(2px);
+      border-radius: var(--radius-lg);
+      gap: 8px;
+    }
+
+    .lock-icon {
+      font-size: 28px;
+    }
+
+    .lock-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    #screen-client-card {
+      flex-direction: column;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+
+    .tab {
+      padding: 7px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      font-family: "Inter", sans-serif;
+    }
+
+    .tab.active {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .ei {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .viewer-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--accent-amber);
+      margin-bottom: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s;
+      box-shadow: var(--shadow-card);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .toast.error {
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      background: var(--accent-blue);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 0 4px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .modal-box h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1>Dashboard</h1>
+          <span></span>
         </div>
-        <div class="nav-section-label">Main</div>
-        <button class="nav-item active" onclick="aNav('home', this)">
+      </div>
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="setRole('admin', this)">Admin</button>
+        <button class="role-tab" onclick="setRole('client', this)">Client</button>
+      </div>
+      <div class="form-group">
+        <label>Username / Client ID</label>
+        <input type="text" id="lu" placeholder="admin  or  CLT-001" onkeydown="if (event.key === 'Enter') doLogin();" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="lp" placeholder="Password" onkeydown="if (event.key === 'Enter') doLogin();" />
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Sign In →</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL framework -->
+  <div id="screen-admin" class="screen">
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h2>FMS Portal</h2>
+          <span>Admin Panel</span>
+        </div>
+      </div>
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item active" onclick="aNav('home', this)">
           <span class="nav-icon">🏠</span>Dashboard
         </button>
-        <button class="nav-item" onclick="aNav('clients', this)">
+      <button class="nav-item" onclick="aNav('clients', this)">
           <span class="nav-icon">👥</span>Clients
         </button>
-        <button class="nav-item" onclick="aNav('messages', this)">
+      <button class="nav-item" onclick="aNav('messages', this)">
           <span class="nav-icon">💬</span>Messages
-          <span
-            class="badge-count"
-            id="mbadge"
-            style="margin-left: auto; display: none"
-            >0</span
-          >
+          <span class="badge-count" id="mbadge" style="margin-left: auto; display: none">0</span>
         </button>
-        <div class="nav-section-label" style="margin-top: 16px">Settings</div>
-        <button class="nav-item" onclick="aNav('stats', this)">
+      <div class="nav-section-label" style="margin-top: 16px">Settings</div>
+      <button class="nav-item" onclick="aNav('stats', this)">
           <span class="nav-icon">📊</span>Edit Stats
         </button>
-        <button class="nav-item" onclick="aNav('access', this)">
+      <button class="nav-item" onclick="aNav('access', this)">
           <span class="nav-icon">🔑</span>Client Access
         </button>
-        <button class="nav-item" onclick="aNav('debug', this)">
+      <button class="nav-item" onclick="aNav('debug', this)">
           <span class="nav-icon">🔍</span>Diagnostics
         </button>
-        <div class="sidebar-footer">
-          <div class="admin-badge">🛡️ Admin</div>
-          <button
-            class="btn btn-ghost btn-sm"
-            style="width: 100%"
-            onclick="logout()"
-          >
-            Sign Out
-          </button>
+      <div class="sidebar-footer">
+        <div class="admin-badge">🛡️ Admin</div>
+        <button class="btn btn-ghost btn-sm" style="width: 100%" onclick="logout()">Sign Out</button>
+      </div>
+    </nav>
+    <div class="main-content">
+      <div id="admin-home" class="admin-page active">
+        <div class="page-header">
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p>Data synced live from Google Sheets.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="reload()">⟳ Refresh</button>
         </div>
-      </nav>
-      <div class="main-content">
-        <div id="admin-home" class="admin-page active">
-          <div class="page-header">
-            <div>
-              <h1>Dashboard Overview</h1>
-              <p>Data synced live from Google Sheets.</p>
-            </div>
-            <button class="btn btn-ghost btn-sm" onclick="reload()">
-              ⟳ Refresh
-            </button>
-          </div>
-          <div class="sync-bar">
-            <div class="sync-dot spin" id="sdot"></div>
-            <span id="smsg">Loading sheets…</span>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-card blue">
-              <!-- <button class="stat-edit-btn" onclick="aNav('stats', null)"> -->
-                
-              </button>
-              <div class="stat-label">Active Links</div>
-              <div class="stat-value blue" id="sv-links">—</div>
-              
-            </div>
-            <div class="stat-card green">
-              <!-- <button class="stat-edit-btn" onclick="aNav('stats', null)"> -->
-                
-              </button>
-              <div class="stat-label">Projects Completed</div>
-              <div class="stat-value green" id="sv-proj">—</div>
-            </div>
-            <div class="stat-card amber">
-              <!-- <button class="stat-edit-btn" onclick="aNav('stats', null)"> -->
-                
-              </button>
-              <div class="stat-label">Total Clients</div>
-              <div class="stat-value amber" id="sv-clients">—</div>
-            </div>
-            <div class="stat-card purple">
-              <div class="stat-label">FMS Cards</div>
-              <div class="stat-value purple" id="sv-cards">—</div>
-            </div>
-          </div>
-          <div class="page-header" style="margin-bottom: 16px">
-            <h2 style="font-size: 16px; font-weight: 600">
-              Recent Client Cards
-            </h2>
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick="aNav('clients', null)"
-            >
-              View All →
-            </button>
-          </div>
-          <div class="client-grid" id="home-cards"></div>
+        <div class="sync-bar">
+          <div class="sync-dot spin" id="sdot"></div>
+          <span id="smsg">Loading sheets…</span>
         </div>
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-label">Active Links</div>
+            <div class="stat-value blue" id="sv-links">—</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Projects Completed</div>
+            <div class="stat-value green" id="sv-proj">—</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Total Clients</div>
+            <div class="stat-value amber" id="sv-clients">—</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">FMS Cards</div>
+            <div class="stat-value purple" id="sv-cards">—</div>
+          </div>
+        </div>
+        <div class="page-header" style="margin-bottom: 16px">
+          <h2 style="font-size: 16px; font-weight: 600">Recent Client Cards</h2>
+          <button class="btn btn-ghost btn-sm" onclick="aNav('clients', null)">View All →</button>
+        </div>
+        <div class="client-grid" id="home-cards"></div>
+      </div>
 
-        <div id="admin-clients" class="admin-page">
-          <div class="page-header">
-            <div>
-              <h1>Client Management</h1>
-              <p>All clients from Project Details sheet.</p>
-            </div>
-            <button class="btn btn-ghost btn-sm" onclick="reload()">
-              ⟳ Refresh
-            </button>
+      <div id="admin-clients" class="admin-page">
+        <div class="page-header">
+          <div>
+            <h1>Client Management</h1>
+            <p>All clients from Project Details sheet.</p>
           </div>
-          <div class="client-grid" id="all-cards"></div>
-          <div class="empty-state" id="no-clients" style="display: none">
-            <div class="ei">👥</div>
-            <p>No clients in sheet yet.</p>
-          </div>
+          <button class="btn btn-ghost btn-sm" onclick="reload()">⟳ Refresh</button>
         </div>
-
-        <div id="admin-messages" class="admin-page">
-          <div class="page-header">
-            <div>
-              <h1>Message Center</h1>
-              <p>All client conversations.</p>
-            </div>
-          </div>
-          <div
-            id="msg-list-el"
-            style="display: flex; flex-direction: column; gap: 16px"
-          ></div>
-          <div class="empty-state" id="no-msgs">
-            <div class="ei">💬</div>
-            <p>No messages yet.</p>
-          </div>
-        </div>
-
-        <div id="admin-stats" class="admin-page">
-          <div class="page-header">
-            <div>
-              <h1>Edit Dashboard Stats</h1>
-              <p>Manually enter the numbers shown on the home page.</p>
-            </div>
-          </div>
-          <div
-            style="
-              background: var(--bg-card);
-              border: 1px solid var(--border);
-              border-radius: var(--radius-lg);
-              padding: 28px;
-              max-width: 480px;
-            "
-          >
-            <div class="form-group">
-              <label>Active Links</label
-              ><input type="number" id="es-links" min="0" placeholder="0" />
-            </div>
-            <div class="form-group">
-              <label>Projects Completed</label
-              ><input type="number" id="es-proj" min="0" placeholder="0" />
-            </div>
-            <div class="form-group">
-              <label>Total Clients</label
-              ><input type="number" id="es-clients" min="0" placeholder="0" />
-            </div>
-            <button
-              class="btn btn-primary"
-              style="width: auto"
-              onclick="saveStats()"
-            >
-              Save Stats
-            </button>
-          </div>
-        </div>
-
-        <div id="admin-access" class="admin-page">
-          <div class="page-header">
-            <div>
-              <h1>Client Access</h1>
-              <p>
-                Set login passwords for each client. Client ID is auto-assigned
-                (CLT-001, CLT-002 …) by row order in the sheet.
-              </p>
-            </div>
-          </div>
-          <div
-            id="access-list"
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 10px;
-              max-width: 640px;
-            "
-          ></div>
-        </div>
-
-        <div id="admin-debug" class="admin-page">
-          <div class="page-header">
-            <div>
-              <h1>Sheet Diagnostics</h1>
-              <p>
-                Raw data read from both Google Sheets — use this to verify
-                column mapping.
-              </p>
-            </div>
-            <button class="btn btn-ghost btn-sm" onclick="renderDebug()">
-              ⟳ Refresh
-            </button>
-          </div>
-          <div
-            id="debug-content"
-            style="display: flex; flex-direction: column; gap: 24px"
-          ></div>
+        <div class="client-grid" id="all-cards"></div>
+        <div class="empty-state" id="no-clients" style="display: none">
+          <div class="ei">👥</div>
+          <p>No clients in sheet yet.</p>
         </div>
       </div>
-    </div>
 
-    <!-- ADMIN DETAIL -->
-    <div
-      id="screen-client-detail"
-      class="screen"
-      style="flex-direction: column"
-    >
-      <div class="detail-header">
-        <button class="back-btn" onclick="closeDetail()">← Back</button>
-        <div style="flex: 1; margin-left: 16px">
-          <div class="detail-title" id="dn"></div>
-          <div class="detail-subtitle" id="ds"></div>
-        </div>
-        <span class="card-status" id="dbadge"></span>
-      </div>
-      <div class="detail-body">
-        <div class="detail-main">
-          <div class="tab-bar">
-            <button
-              class="tab active"
-              onclick="swTab('fms', this, 'screen-client-detail', 'tab-')"
-            >
-              FMS Steps
-            </button>
-            <button
-              class="tab"
-              onclick="swTab('docs', this, 'screen-client-detail', 'tab-')"
-            >
-              Documents
-            </button>
-            <button
-              class="tab"
-              onclick="swTab('info', this, 'screen-client-detail', 'tab-')"
-            >
-              Project Info
-            </button>
-          </div>
-          <div id="tab-fms" class="tab-panel active">
-            <div class="fms-timeline" id="d-fms"></div>
-          </div>
-          <div id="tab-docs" class="tab-panel">
-            <div class="doc-list" id="d-docs"></div>
-          </div>
-          <div id="tab-info" class="tab-panel">
-            <div class="info-grid" id="d-info"></div>
+      <div id="admin-messages" class="admin-page">
+        <div class="page-header">
+          <div>
+            <h1>Message Center</h1>
+            <p>All client conversations.</p>
           </div>
         </div>
-        <div class="detail-sidebar">
-          <div class="messages-panel">
-            <div class="messages-header">
-              💬 Conversation
-              <span
-                id="d-msgname"
-                style="color: var(--text-muted); font-weight: 400"
-              ></span>
-            </div>
-            <div class="messages-list" id="d-msgs"></div>
-            <div class="messages-input">
-              <textarea
-                id="a-inp"
-                placeholder="Send a message to client…"
-                rows="1"
-                onkeydown="
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendAdmin();
-                  }
-                "
-              ></textarea>
-              <button class="send-btn" onclick="sendAdmin()">➤</button>
-            </div>
-          </div>
+        <div id="msg-list-el" style="display: flex; flex-direction: column; gap: 16px"></div>
+        <div class="empty-state" id="no-msgs">
+          <div class="ei">💬</div>
+          <p>No messages yet.</p>
         </div>
       </div>
-    </div>
 
-    <!-- CLIENT PORTAL -->
-    <div id="screen-client" class="screen" style="flex-direction: column">
-      <div class="portal-header">
-        <div class="portal-logo">
-          <div
-            class="logo-icon"
-            style="width: 32px; height: 32px; font-size: 14px"
-          >
-            ⚡
+      <div id="admin-stats" class="admin-page">
+        <div class="page-header">
+          <div>
+            <h1>Edit Dashboard Stats</h1>
+            <p>Manually enter the numbers shown on the home page.</p>
           </div>
-          <h1>FMS Portal</h1>
         </div>
-        <div class="portal-user">
-          <!-- Avatar: shows logo image if available, else color initials -->
-          <div class="avatar" id="p-av" style="background: var(--accent-blue)">
-            C
-          </div>
-          <span id="p-name">Client</span>
-          <button class="btn btn-ghost btn-sm" onclick="logout()">
-            Sign Out
-          </button>
-        </div>
-      </div>
-      <div class="portal-body">
-        <div class="portal-welcome">
-          <h2 id="p-welcome">Welcome!</h2>
-          <p id="p-sub"></p>
-        </div>
-        <!-- Logo banner shown at top of portal body -->
         <div
-          class="portal-client-logo-banner"
-          id="p-logo-banner"
-          style="display: none"
-        >
-          <div id="p-logo-img-wrap"></div>
-          <div class="banner-text">
-            <h3 id="p-banner-name"></h3>
-            <p id="p-banner-project"></p>
+          style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; max-width: 480px;">
+          <div class="form-group">
+            <label>Active Links</label><input type="number" id="es-links" min="0" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Projects Completed</label><input type="number" id="es-proj" min="0" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Total Clients</label><input type="number" id="es-clients" min="0" placeholder="0" />
+          </div>
+          <button class="btn btn-primary" style="width: auto" onclick="saveStats()">Save Stats</button>
+        </div>
+      </div>
+
+      <div id="admin-access" class="admin-page">
+        <div class="page-header">
+          <div>
+            <h1>Client Access</h1>
+            <p>Set login passwords for each client. Client ID is auto-assigned by row order in the sheet.</p>
           </div>
         </div>
-        <div class="cards-list" id="p-cards"></div>
+        <div id="access-list" style="display: flex; flex-direction: column; gap: 10px; max-width: 640px;"></div>
+      </div>
+
+      <div id="admin-debug" class="admin-page">
+        <div class="page-header">
+          <div>
+            <h1>Sheet Diagnostics</h1>
+            <p>Raw data read from both Google Sheets — use this to verify column mapping.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="renderDebug()">⟳ Refresh</button>
+        </div>
+        <div id="debug-content" style="display: flex; flex-direction: column; gap: 24px"></div>
       </div>
     </div>
+  </div>
 
-    <!-- CLIENT CARD DETAIL -->
-    <div id="screen-client-card" class="screen" style="flex-direction: column">
-      <div class="detail-header">
-        <button class="back-btn" onclick="showScreen('screen-client')">
-          ← My Portal
-        </button>
-        <div style="flex: 1; margin-left: 16px">
-          <div class="detail-title" id="cc-name"></div>
-          <div class="detail-subtitle" id="cc-sub"></div>
+  <!-- ADMIN DETAIL SCENARIO -->
+  <div id="screen-client-detail" class="screen" style="flex-direction: column">
+    <div class="detail-header">
+      <button class="back-btn" onclick="closeDetail()">← Back</button>
+      <div style="flex: 1; margin-left: 16px">
+        <div class="detail-title" id="dn"></div>
+        <div class="detail-subtitle" id="ds"></div>
+      </div>
+      <span class="card-status" id="dbadge"></span>
+    </div>
+    <div class="detail-body">
+      <div class="detail-main">
+        <div class="tab-bar">
+          <button class="tab active" onclick="swTab('fms', this, 'screen-client-detail', 'tab-')">FMS Steps</button>
+          <button class="tab" onclick="swTab('docs', this, 'screen-client-detail', 'tab-')">Documents</button>
+          <button class="tab" onclick="swTab('info', this, 'screen-client-detail', 'tab-')">Project Info</button>
         </div>
-        <div class="viewer-notice" style="margin-bottom: 0; margin-left: 12px">
-          👁 Viewer Access
+        <div id="tab-fms" class="tab-panel active">
+          <div class="fms-timeline" id="d-fms"></div>
+        </div>
+        <div id="tab-docs" class="tab-panel">
+          <div class="doc-list" id="d-docs"></div>
+        </div>
+        <div id="tab-info" class="tab-panel">
+          <div class="info-grid" id="d-info"></div>
         </div>
       </div>
-      <div class="detail-body">
-        <div class="detail-main">
-          <div class="tab-bar">
-            <button
-              class="tab active"
-              onclick="swTab('fms', this, 'screen-client-card', 'cc-')"
-            >
-              FMS Steps
-            </button>
-            <button
-              class="tab"
-              onclick="swTab('docs', this, 'screen-client-card', 'cc-')"
-            >
-              Documents
-            </button>
-            <button
-              class="tab"
-              onclick="swTab('info', this, 'screen-client-card', 'cc-')"
-            >
-              Project Info
-            </button>
+      <div class="detail-sidebar">
+        <div class="messages-panel">
+          <div class="messages-header">
+            💬 Conversation <span id="d-msgname" style="color: var(--text-muted); font-weight: 400"></span>
           </div>
-          <div id="cc-fms" class="tab-panel active">
-            <div class="fms-timeline" id="cc-fms-tl"></div>
-          </div>
-          <div id="cc-docs" class="tab-panel">
-            <div class="viewer-notice">👁 Viewer-only access to documents.</div>
-            <div class="doc-list" id="cc-docs-list"></div>
-          </div>
-          <div id="cc-info" class="tab-panel">
-            <div class="info-grid" id="cc-info-grid"></div>
-          </div>
-        </div>
-        <div class="detail-sidebar">
-          <div class="messages-panel">
-            <div class="messages-header">💬 Messages with Admin</div>
-            <div class="messages-list" id="cc-msgs"></div>
-            <div class="messages-input">
-              <textarea
-                id="c-inp"
-                placeholder="Send a message…"
-                rows="1"
-                onkeydown="
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendClient();
-                  }
-                "
-              ></textarea>
-              <button class="send-btn" onclick="sendClient()">➤</button>
-            </div>
-            <div class="msg-readonly-note">
-              📝 You can only send messages. Everything else is view-only.
-            </div>
+          <div class="messages-list" id="d-msgs"></div>
+          <div class="messages-input">
+            <textarea id="a-inp" placeholder="Send a message to client…" rows="1" onkeydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendAdmin(); }"></textarea>
+            <button class="send-btn" onclick="sendAdmin()">➤</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- SET PASSWORD MODAL -->
-    <div class="modal-overlay" id="modal-pass">
-      <div class="modal-box">
-        <button class="modal-close" onclick="closeModal('modal-pass')">
-          ✕
-        </button>
-        <h2>Set Client Password</h2>
-        <p class="modal-sub" id="pass-sub">Set login password.</p>
-        <div class="form-group">
-          <label>Password</label
-          ><input type="text" id="pass-inp" placeholder="Enter password" />
+  <!-- CLIENT PORTAL -->
+  <div id="screen-client" class="screen" style="flex-direction: column">
+    <div class="portal-header">
+      <div class="portal-logo">
+        <div class="logo-icon" style="width: 32px; height: 32px; font-size: 14px">⚡</div>
+        <h1>FMS Portal</h1>
+      </div>
+      <div class="portal-user">
+        <div class="avatar" id="p-av" style="background: var(--accent-blue)">C</div>
+        <span id="p-name">Client</span>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+      </div>
+    </div>
+    <div class="portal-body">
+      <div class="portal-welcome">
+        <h2 id="p-welcome">Welcome!</h2>
+        <p id="p-sub"></p>
+      </div>
+      <div class="portal-client-logo-banner" id="p-logo-banner" style="display: none">
+        <div id="p-logo-img-wrap"></div>
+        <div class="banner-text">
+          <h3 id="p-banner-name"></h3>
+          <p id="p-banner-project"></p>
         </div>
-        <div class="modal-actions">
-          <button class="btn btn-ghost" onclick="closeModal('modal-pass')">
-            Cancel
-          </button>
-          <button
-            class="btn btn-primary"
-            style="width: auto"
-            onclick="confirmPass()"
-          >
-            Save Password
-          </button>
+      </div>
+      <div class="cards-list" id="p-cards"></div>
+    </div>
+  </div>
+
+  <!-- CLIENT CARD DETAIL -->
+  <div id="screen-client-card" class="screen" style="flex-direction: column">
+    <div class="detail-header">
+      <button class="back-btn" onclick="showScreen('screen-client')">← My Portal</button>
+      <div style="flex: 1; margin-left: 16px">
+        <div class="detail-title" id="cc-name"></div>
+        <div class="detail-subtitle" id="cc-sub"></div>
+      </div>
+      <div class="viewer-notice" style="margin-bottom: 0; margin-left: 12px">👁 Viewer Access</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-main">
+        <div class="tab-bar">
+          <button class="tab active" onclick="swTab('fms', this, 'screen-client-card', 'cc-')">FMS Steps</button>
+          <button class="tab" onclick="swTab('docs', this, 'screen-client-card', 'cc-')">Documents</button>
+          <button class="tab" onclick="swTab('info', this, 'screen-client-card', 'cc-')">Project Info</button>
+        </div>
+        <div id="cc-fms" class="tab-panel active">
+          <div class="fms-timeline" id="cc-fms-tl"></div>
+        </div>
+        <div id="cc-docs" class="tab-panel">
+          <div class="viewer-notice">👁 Viewer-only access to documents.</div>
+          <div class="doc-list" id="cc-docs-list"></div>
+        </div>
+        <div id="cc-info" class="tab-panel">
+          <div class="info-grid" id="cc-info-grid"></div>
+        </div>
+      </div>
+      <div class="detail-sidebar">
+        <div class="messages-panel">
+          <div class="messages-header">💬 Messages with Admin</div>
+          <div class="messages-list" id="cc-msgs"></div>
+          <div class="messages-input">
+            <textarea id="c-inp" placeholder="Send a message…" rows="1" onkeydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendClient(); }"></textarea>
+            <button class="send-btn" onclick="sendClient()">➤</button>
+          </div>
+          <div class="msg-readonly-note">📝 You can only send messages. Everything else is view-only.</div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="toast" id="toast">✅ <span id="tmsg"></span></div>
+  <!-- SET PASSWORD MODAL -->
+  <div class="modal-overlay" id="modal-pass">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('modal-pass')">✕</button>
+      <h2>Set Client Password</h2>
+      <p class="modal-sub" id="pass-sub">Set login password.</p>
+      <div class="form-group">
+        <label>Password</label><input type="text" id="pass-inp" placeholder="Enter password" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('modal-pass')">Cancel</button>
+        <button class="btn btn-primary" style="width: auto" onclick="confirmPass()">Save Password</button>
+      </div>
+    </div>
+  </div>
 
-    <script>
-      // ── SHEET CONFIG ──────────────────────────────────
-      const FMS_ID = "1OUgNpHfAlQlOy8PgCvT2bcd-3po98MKI2HMlwGZMAps";
+  <div class="toast" id="toast">✅ <span id="tmsg"></span></div>
+
+  <script>
+       const FMS_ID = "1OUgNpHfAlQlOy8PgCvT2bcd-3po98MKI2HMlwGZMAps";
       const FMS_GID = "0";
       const PROJ_ID = "1_yoPWOS_1icAxyOdCNhJQ-seONvJRmVAxN3P8uVh3Io";
       const PROJ_GID = "518261841";
-
-      // ── LOCAL STORE ───────────────────────────────────
+    // ── RUNTIME MEMORY ALLOCATIONS ─────────────────────
       let LS = { pw: {}, msgs: {}, stats: { links: 0, proj: 0, clients: 0 }, session: null };
-      function loadLS() {
-        try {
-          const s = localStorage.getItem("fms2");
-          if (s) LS = JSON.parse(s);
-        } catch (e) {}
-      }
-      function saveLS() {
-        try {
-          localStorage.setItem("fms2", JSON.stringify(LS));
-        } catch (e) {}
-      }
-      loadLS();
-
-      // ── RUNTIME STATE ─────────────────────────────────
-      let projectRows = [];
+      let clientObjectsList = [];
+      let fmsRawMatrix = [];
+      let FMS_STEPS_DEF = [];
+      let FMS_DATA_ROWS = [];
       let loginRole = "admin";
       let curUser = null;
       let curCid = null;
       let fmsLoadError = null;
-      let lastFmsUrl = "";
 
-      // ── JSONP SHEET FETCHER ───────────────────────────
-      let _cbIdx = 0;
-      function fetchSheetGviz(sheetId, gid, headers) {
-        return new Promise((resolve, reject) => {
-          const cbName = "__gvizCb" + _cbIdx++;
-          // By default, Google's gviz endpoint auto-detects a header
-          // row and silently removes it from tbl.rows (moving it into
-          // tbl.cols instead). gvizToObjs() relies on that behavior
-          // for the Project sheet. But gvizToRaw() for the FMS sheet
-          // needs EVERY row untouched (its own header rows included),
-          // so callers can pass headers=0 to disable auto-detection.
-          const headersParam =
-            headers !== undefined && headers !== null
-              ? `&headers=${headers}`
-              : "";
-          const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}&gid=${gid || "0"}${headersParam}`;
-          const script = document.createElement("script");
-          script.src = url;
-
-          let done = false;
-          const timer = setTimeout(() => {
-            if (done) return;
-            done = true;
-            cleanup();
-            reject(
-              new Error(
-                "Timeout loading sheet. Check that the sheet is public.",
-              ),
-            );
-          }, 15000);
-
-          window[cbName] = function (data) {
-            if (done) return;
-            done = true;
-            clearTimeout(timer);
-            cleanup();
-            // Google's gviz endpoint can respond with HTTP 200 but an
-            // error payload (e.g. bad gid, sheet not shared, tab
-            // deleted/renamed). Previously this was ignored, so the
-            // FMS sheet would silently resolve to an empty table with
-            // no visible error. Surface it instead.
-            if (!data) {
-              reject(new Error("Empty response from Google Sheets."));
-              return;
+      function loadLS() {
+        google.script.run.withSuccessHandler(function(result) {
+          try {
+            if (result) {
+              LS = JSON.parse(result);
+              updateStats();
+              updateMsgBadge();
             }
-            if (data.status === "error") {
-              const detail =
-                (data.errors &&
-                  data.errors[0] &&
-                  (data.errors[0].detailed_message ||
-                    data.errors[0].message)) ||
-                "Unknown error from Google Sheets.";
-              reject(
-                new Error(
-                  `${detail} (sheet ${sheetId}, gid ${gid || "0"}). Check that this specific tab is shared publicly and the gid is correct.`,
-                ),
-              );
-              return;
-            }
-            if (!data.table) {
-              reject(
-                new Error(
-                  `No "table" in response for sheet ${sheetId}, gid ${gid || "0"}. The sheet may not be public, or the gid may not exist.`,
-                ),
-              );
-              return;
-            }
-            resolve(data);
-          };
-
-          script.onerror = () => {
-            if (done) return;
-            done = true;
-            clearTimeout(timer);
-            cleanup();
-            reject(
-              new Error("Failed to load sheet script. Ensure sheet is public."),
-            );
-          };
-
-          function cleanup() {
-            delete window[cbName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-          }
-
-          document.head.appendChild(script);
-        });
+          } catch(e) { console.error("Properties storage load failed", e); }
+        }).loadStorageBackend();
       }
 
-      function gvizCellVal(cell) {
-        if (!cell || cell.v === null || cell.v === undefined) return "";
-        if (cell.f !== null && cell.f !== undefined)
-          return String(cell.f).trim();
-        const v = cell.v;
-        if (typeof v === "string" && v.startsWith("Date(")) {
-          const parts = v.slice(5, -1).split(",").map(Number);
-          return new Date(parts[0], parts[1], parts[2]).toLocaleDateString(
-            "en-IN",
-          );
-        }
-        return String(v).trim();
+      function saveLS() {
+        google.script.run.saveStorageBackend(JSON.stringify(LS));
       }
 
-      function gvizToRaw(data) {
-        const tbl = data.table;
-        if (!tbl || !tbl.rows) return [];
-        return tbl.rows.map((row) =>
-          (row.c || []).map((cell) => gvizCellVal(cell)),
-        );
-      }
-
-      function gvizToObjs(data) {
-        const tbl = data.table;
-        if (!tbl || !tbl.cols) return [];
-        const headers = tbl.cols.map((c) => (c.label || c.id || "").trim());
-        return (tbl.rows || [])
-          .map((row) => {
-            const obj = {};
-            headers.forEach((h, i) => {
-              obj[h] = gvizCellVal(row.c && row.c[i]);
-            });
-            return obj;
+      // ── MASTER RELOAD METHOD FOR NATIVE APPS SCRIPT ────
+      function reload() {
+        setSyncState("spin", "Loading live matrix vectors from Google Sheets...");
+        
+        google.script.run
+          .withSuccessHandler(function(response) {
+            if (response.error) {
+              setSyncState("err", response.error);
+              toast("Server Pipeline Error: " + response.error, "error");
+              return;
+            }
+            
+            clientObjectsList = response.clients || [];
+            fmsRawMatrix = response.fmsRawData || [];
+            
+            if (fmsRawMatrix.length >= 5) {
+              FMS_DATA_ROWS = fmsRawMatrix.slice(5).filter(r => r.some(v => v));
+              parseFmsSheet();
+              fmsLoadError = null;
+            } else if (fmsRawMatrix.length > 0) {
+              FMS_DATA_ROWS = fmsRawMatrix.slice(1).filter(r => r.some(v => v));
+              parseFmsSheet();
+              fmsLoadError = null;
+            } else {
+              fmsLoadError = "FMS matrix structure returned zero active data rows.";
+            }
+            
+            updateStats();
+            renderHomeCards();
+            renderAllCards();
+            renderAccess();
+            updateMsgBadge();
+            
+            if (fmsLoadError) {
+              setSyncState("err", fmsLoadError);
+              toast(fmsLoadError, "error");
+            } else {
+              setSyncState("", "Pipeline Synced: " + new Date().toLocaleTimeString('en-IN') + " (" + FMS_DATA_ROWS.length + " Rows Linked)");
+            }
           })
-          .filter((r) => Object.values(r).some((v) => v));
+          .withFailureHandler(function(err) {
+            setSyncState("err", err.message);
+            toast("Google Cloud Connection Interrupted: " + err.message, "error");
+          })
+          .getMasterDashboardPayload();
       }
-
-      let fmsRaw = [];
-
-      async function loadSheets() {
-        // Fetch the Project Details sheet and the FMS sheet
-        // independently. Previously both were fetched with
-        // Promise.all(), so if the FMS sheet failed (wrong gid, not
-        // shared, tab renamed, etc.) the *entire* load rejected and
-        // projectRows never got assigned — even though the project
-        // sheet had already loaded successfully. Now a broken FMS
-        // sheet only affects FMS data, and the specific error is
-        // captured in fmsLoadError so it can be surfaced to the admin.
-        const projData = await fetchSheetGviz(PROJ_ID, PROJ_GID);
-        projectRows = gvizToObjs(projData);
-
-        lastFmsUrl = `https://docs.google.com/spreadsheets/d/${FMS_ID}/edit#gid=${FMS_GID}`;
-        try {
-          const fmsData = await fetchSheetGviz(FMS_ID, FMS_GID, 0);
-          fmsRaw = gvizToRaw(fmsData);
-          parseFmsSheet();
-          fmsLoadError = null;
-          if (!fmsRaw.length) {
-            fmsLoadError =
-              "FMS sheet loaded but returned 0 rows. Check that data starts where the parser expects (row 1 = step names, row 5 = Planned/Actual/Status headers).";
-          } else if (!FMS_STEPS_DEF.length) {
-            fmsLoadError =
-              'FMS sheet has data but no "Planned" sub-header was found on row 5 — step columns could not be detected.';
-          }
-        } catch (e) {
-          fmsRaw = [];
-          FMS_STEPS_DEF = [];
-          FMS_DATA_ROWS = [];
-          fmsLoadError = e.message;
-          console.error("[FMS] Failed to load FMS sheet:", e);
-        }
-      }
-
-      // ── FMS HORIZONTAL SHEET PARSER ───────────────────
-      let FMS_STEPS_DEF = [];
-      let FMS_DATA_ROWS = [];
-      let FMS_SECTION_UPLOAD_COLS = [];
 
       function parseFmsSheet() {
-  if (!fmsRaw || fmsRaw.length < 6) return;
+        if (!fmsRawMatrix || fmsRawMatrix.length < 2) return;
+        const headerIdx = fmsRawMatrix.length >= 5 ? 4 : 0;
+        
+        const row0 = fmsRawMatrix[0] || [];
+        const row4 = fmsRawMatrix[headerIdx] || [];
+        FMS_STEPS_DEF = [];
 
-  // Row indices in gvizToRaw output (tbl.rows only, no header row):
-  // Row 0 = your sheet row 1 (step names like "What", "Step 1", etc.)
-  // Row 4 = your sheet row 5 (sub-headers: Planned, Actual, Status...)
-  // Row 5+ = your actual data rows
-
- const row0 = fmsRaw[0] || [];
-const row4 = fmsRaw[4] || [];
-FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
-  FMS_STEPS_DEF = [];
-
-  const plannedCols = [];
-  for (let c = 0; c < row4.length; c++) {
-    if ((row4[c] || "").trim().toLowerCase() === "planned")
-      plannedCols.push(c);
-  }
+        const plannedCols = [];
+        for (let c = 0; c < row4.length; c++) {
+          if ((row4[c] || "").trim().toLowerCase() === "planned") plannedCols.push(c);
+        }
 
         plannedCols.forEach((plannedCol, idx) => {
-          const blockEnd =
-            idx < plannedCols.length - 1
-              ? plannedCols[idx + 1] - 1
-              : row4.length - 1;
+          const blockEnd = idx < plannedCols.length - 1 ? plannedCols[idx + 1] - 1 : row4.length - 1;
           let stepName = "";
           for (let c = plannedCol; c >= 0; c--) {
             const v = (row0[c] || "").trim();
@@ -2013,31 +1808,24 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
               break;
             }
           }
-          if (!stepName) return;
+          if (!stepName) stepName = row4[plannedCol] || "Step " + (idx + 1);
+          
           const sub = {};
           for (let c = plannedCol; c <= blockEnd && c < row4.length; c++) {
             const key = (row4[c] || "").trim().toLowerCase();
             if (key && !sub[key]) sub[key] = c;
           }
-          const actualCol = sub["actual"] ?? plannedCol + 1;
-          const statusCol = sub["status"] ?? sub["yes/no"] ?? plannedCol + 2;
-          const delayCol = sub["time delay"] ?? plannedCol + 3;
-          const noteCol = sub["note"] ?? plannedCol + 4;
-          const uploadCol = sub["upload"] ?? plannedCol + 5;
+          
           FMS_STEPS_DEF.push({
             name: stepName,
             plannedCol,
-            actualCol,
-            statusCol,
-            delayCol,
-            noteCol,
-            uploadCol,
+            actualCol: sub["actual"] ?? plannedCol + 1,
+            statusCol: sub["status"] ?? sub["yes/no"] ?? plannedCol + 2,
+            delayCol: sub["time delay"] ?? plannedCol + 3,
+            noteCol: sub["note"] ?? plannedCol + 4,
+            uploadCol: sub["upload"] ?? plannedCol + 5
           });
         });
-        console.log(
-          `[FMS] Parsed ${FMS_STEPS_DEF.length} steps:`,
-          FMS_STEPS_DEF.map((s) => s.name),
-        );
       }
 
       function getFmsStepsForRow(dataRow) {
@@ -2049,27 +1837,14 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
           const upload = (dataRow[def.uploadCol] || "").trim();
           let status = "pending";
           const sl = rawStatus.toLowerCase();
-          if (
-            sl === "done" ||
-            sl === "yes" ||
-            sl === "completed" ||
-            sl === "finished" ||
-            sl === "1"
-          )
-            status = "done";
-          else if (
-            sl === "in progress" ||
-            sl === "ongoing" ||
-            sl === "active" ||
-            sl === "wip" ||
-            sl === "current"
-          )
-            status = "active";
+          
+          if (["done", "yes", "completed", "finished", "1"].includes(sl)) status = "done";
+          else if (["in progress", "ongoing", "active", "wip", "current"].includes(sl)) status = "active";
           else if (rawStatus === "") {
             if (actual) status = "done";
             else if (planned) status = "active";
           }
-          const docs = extractUploadDocs(upload);
+          
           return {
             stepNo: String(i + 1),
             name: def.name,
@@ -2077,346 +1852,24 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
             planned,
             actual,
             note,
-            docs,
+            docs: extractUploadDocs(upload)
           };
         });
       }
 
-      // ── DOCUMENT LINK HELPERS ─────────────────────────
-      // Converts a raw Drive URL / share link / bare file ID into a
-      // clickable "view" URL. Unlike resolveLogoUrl (which builds
-      // thumbnail image URLs), this builds a normal file-viewer link
-      // suitable for opening in a new tab.
-      function resolveDocUrl(raw) {
-        if (!raw) return "";
-        const s = raw.trim();
-        const driveMatch = s.match(/\/d\/([a-zA-Z0-9_-]{15,})/);
-        if (driveMatch)
-          return `https://drive.google.com/file/d/${driveMatch[1]}/view`;
-        const openIdMatch = s.match(/[?&]id=([a-zA-Z0-9_-]{15,})/);
-        if (openIdMatch)
-          return `https://drive.google.com/file/d/${openIdMatch[1]}/view`;
-        if (/^https?:\/\//i.test(s)) return s;
-        if (/^[a-zA-Z0-9_-]{25,44}$/.test(s))
-          return `https://drive.google.com/file/d/${s}/view`;
-        return "";
-      }
+      function getFmsSteps(client) {
+        const normalize = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const projName = normalize(client.project || client.name);
+        if (!FMS_DATA_ROWS.length) return [];
 
-      // Parses the "Upload" cell (which may contain one or more
-      // filenames, raw URLs, Drive share links, or bare file IDs)
-      // into a list of { name, url } documents. Scans the ENTIRE
-      // cell for every URL present — regardless of whether multiple
-      // links are separated by newlines, commas, or just a space —
-      // so nothing gets silently dropped when more than one link is
-      // pasted into the same cell.
-      function extractUploadDocs(upload) {
-        if (!upload) return [];
-        const docs = [];
-        const seenUrls = new Set();
-
-        const urlRegex = /https?:\/\/\S+/g;
-        const segments = [];
-        let match,
-          lastIndex = 0;
-        while ((match = urlRegex.exec(upload)) !== null) {
-          const url = match[0].replace(/[)\]"'.,]+$/, "");
-          segments.push({
-            textBefore: upload.slice(lastIndex, match.index),
-            url,
-          });
-          lastIndex = match.index + match[0].length;
+        let matched = FMS_DATA_ROWS.filter((r) => normalize(r[1]) === projName);
+        if (!matched.length) {
+          matched = FMS_DATA_ROWS.filter((r) => JSON.stringify(r).toUpperCase().includes(client.id.toUpperCase()));
         }
-        const tail = upload.slice(lastIndex);
-        let tailConsumedAsName = false;
-
-        segments.forEach((seg, idx) => {
-          if (seenUrls.has(seg.url)) return;
-          seenUrls.add(seg.url);
-          let name = seg.textBefore
-            .split("\n")
-            .pop()
-            .replace(/^[\s,;]+/, "")
-            .replace(/[\s,;:-]+$/, "")
-            .trim();
-          // No label before the link (common when just a bare URL is
-          // pasted) — check for a trailing label after it instead,
-          // e.g. "https://... GF Measurement" or "https://... - GF Measurement".
-          if (!name && idx === segments.length - 1) {
-            const afterText = tail.trim();
-            if (afterText && !/^https?:\/\//i.test(afterText)) {
-              const cleaned = afterText.replace(/^[\s,;:-]+/, "").trim();
-              if (cleaned) {
-                name = cleaned;
-                tailConsumedAsName = true;
-              }
-            }
-          }
-          if (!name) name = "View document";
-          docs.push({ name, url: resolveDocUrl(seg.url) || seg.url });
-        });
-
-        // Anything left after the last URL (or the whole cell, if no
-        // URLs were found at all) may still contain bare filenames
-        // or bare Drive file IDs with no surrounding link text —
-        // unless that trailing text was already used as a doc name
-        // above.
-        const remainder = (
-          segments.length ? (tailConsumedAsName ? "" : tail) : upload
-        ).trim();
-        remainder
-          .split(/[\n,]+/)
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .forEach((part) => {
-            if (/^[a-zA-Z0-9_-]{25,44}$/.test(part)) {
-              docs.push({
-                name: "View document",
-                url: `https://drive.google.com/file/d/${part}/view`,
-              });
-              return;
-            }
-            const fileTokens =
-              part.match(/[\w\s\-\(\)\/\.]+?\.[a-zA-Z]{2,5}/g) || [];
-            if (fileTokens.length) {
-              fileTokens.forEach((f) => {
-                const fname = f.trim();
-                if (fname) docs.push({ name: fname, url: "" });
-              });
-            } else {
-              docs.push({ name: part, url: "" });
-            }
-          });
-
-        return docs;
+        if (!matched.length && FMS_DATA_ROWS.length === 1) matched = FMS_DATA_ROWS;
+        if (!matched.length) return [];
+        return getFmsStepsForRow(matched[0]);
       }
-
-      // ── COLUMN LOOKUP ─────────────────────────────────
-      function gcol(obj, ...keys) {
-        for (const k of keys) {
-          for (const ok of Object.keys(obj)) {
-            if (
-              ok.toLowerCase().replace(/[\s_-]/g, "") ===
-              k.toLowerCase().replace(/[\s_-]/g, "")
-            )
-              return obj[ok] || "";
-          }
-        }
-        return "";
-      }
-
-      // ── BUILD CLIENT ──────────────────────────────────
-      const COLORS = [
-        "#2563EB",
-        "#10B981",
-        "#8B5CF6",
-        "#F59E0B",
-        "#EF4444",
-        "#06B6D4",
-        "#EC4899",
-        "#F97316",
-      ];
-      function ccolor(id) {
-        return COLORS[(parseInt(id.replace("CLT-", "")) || 1) % COLORS.length];
-      }
-      function initials(name) {
-        return (name || "?")
-          .split(" ")
-          .map((w) => w[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2);
-      }
-
-      function buildClient(row, idx) {
-        return {
-          id: `CLT-${String(idx + 1).padStart(3, "0")}`,
-          name: gcol(
-            row,
-            "Client Contact Person",
-            "Client Name",
-            "Name",
-            "client",
-          ),
-          project: gcol(
-            row,
-            "ProjectName",
-            "Project Name",
-            "project",
-            "Project",
-          ),
-          email: gcol(
-            row,
-            "Email",
-            "Mail Id (Client)",
-            "Email ID",
-            "E-mail",
-            "email",
-          ),
-          phone: gcol(
-            row,
-            "Contact No. (Client)",
-            "Phone Number",
-            "Phone",
-            "Mobile",
-            "Contact",
-          ),
-          startDate: gcol(
-            row,
-            "StartDate",
-            "Start Date",
-            "start date",
-            "start",
-          ),
-          expectedDate: gcol(
-            row,
-            "ExpectedDate",
-            "Expected End Date",
-            "Expected Completion Date",
-            "expecteddate",
-          ),
-          poDate: gcol(row, "PODate", "PO Date", "podate"),
-          poNumber: gcol(row, "PONumber", "PO Number", "PO no.", "ponumber"),
-          poAmount: gcol(
-            row,
-            "POAmount",
-            "Total PO Amount",
-            "Amount",
-            "poamount",
-          ),
-          // Logo: URL or Google Drive file ID stored in the "Logo" column
-          logo: gcol(
-            row,
-            "LOGO",
-          
-          ),
-          // Project-level documents: a Drive folder link (or file link,
-          // or comma/newline separated list of links) stored in the
-          // Project Details sheet — separate from the per-step
-          // "Upload" columns in the FMS sheet.
-          docs: gcol(
-            row,
-            "Documents",
-            
-            "Docs",
-            "MOM Upload",
-           
-          ),
-        };
-      }
-      function getClients() {
-        return projectRows.map((r, i) => buildClient(r, i));
-      }
-
-      // ── LOGO HELPERS ──────────────────────────────────
-      // Converts a raw logo value (URL or Google Drive sharing link / file ID) into a usable img src.
-    function resolveLogoUrl(raw) {
-  if (!raw) return "";
-  const s = raw.trim();
-  if (s.match(/^https?:\/\/.+\.(png|jpg|jpeg|gif|svg|webp)/i)) return s;
-  const driveMatch = s.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
-  if (driveMatch)
-    return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w200`;
-  if (s.match(/^[a-zA-Z0-9_-]{25,44}$/))
-    return `https://drive.google.com/thumbnail?id=${s}&sz=w200`;
-  if (s.startsWith("http")) return s;
-  // Treat as a relative filename (logos folder next to the HTML file)
-  if (s.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i)) return `logos/${s}`;
-  return "";
-}
-
-      // Parses the Project Details "Documents" cell into a list of
-      // { name, url } project-level documents. Reuses the same
-      // multi-link extraction logic as extractUploadDocs so a single
-      // cell can hold a folder link, several file links, or a mix,
-      // separated by newlines/commas/spaces.
-      function extractProjectDocs(raw) {
-        if (!raw) return [];
-        const trimmed = raw.trim();
-        // A bare Drive folder link isn't caught by extractUploadDocs'
-        // "file id" fallback (folder ids can look like file ids), but
-        // since it's a full URL already it flows through the normal
-        // URL-scanning branch just fine. We still route everything
-        // through extractUploadDocs for consistent name/link parsing.
-        return extractUploadDocs(trimmed).map((d) => {
-          // extractUploadDocs builds file-view links via resolveDocUrl;
-          // that's fine for /file/d/ links, but folder links
-          // (/drive/folders/ID) already pass through untouched since
-          // they match the "starts with http" branch.
-          return d;
-        });
-      }
-
-      // Returns HTML for the avatar area: img tag if logo available, else initials div
-      function avatarHtml(client, size = 44, fontSize = 16) {
-        const logoUrl = resolveLogoUrl(client.logo);
-        const col = ccolor(client.id);
-        if (logoUrl) {
-          return `<div class="client-avatar" style="background:#fff;width:${size}px;height:${size}px;padding:3px;">
-      <img src="${esc(logoUrl)}" alt="${esc(client.name)} logo"
-           onerror="this.parentElement.innerHTML='<span style=font-size:${fontSize}px;font-weight:700>${esc(initials(client.name))}</span>';this.parentElement.style.background='${col}22';this.parentElement.style.color='${col}';"
-           style="width:100%;height:100%;object-fit:contain;border-radius:7px;">
-    </div>`;
-        }
-        return `<div class="client-avatar" style="background:${col}22;color:${col};width:${size}px;height:${size}px;font-size:${fontSize}px">${initials(client.name)}</div>`;
-      }
-
-      // Returns HTML for the large banner logo shown at the top of the client portal
-      function bannerLogoHtml(client) {
-        const logoUrl = resolveLogoUrl(client.logo);
-        const col = ccolor(client.id);
-        if (logoUrl) {
-          return `<img src="${esc(logoUrl)}" alt="${esc(client.logo)} logo"
-      onerror="this.outerHTML='<div class=\\'logo-fallback\\' style=\\'background:${col}22;color:${col}\\'>${esc(initials(client.name))}</div>';"
-      style="height:52px;max-width:160px;object-fit:contain;border-radius:6px;">`;
-        }
-        return `<div class="logo-fallback" style="background:${col}22;color:${col}">${initials(client.name)}</div>`;
-      }
-
-      // ── GET FMS STEPS FOR A CLIENT ────────────────────
-     function getFmsSteps(client) {
-  const normalize = (s) =>
-    (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-
-  const projName = normalize(client.project || client.name);
-  if (!projName || !FMS_DATA_ROWS.length) return [];
-
-  // 1. Exact normalized match on col[1]
-  let matched = FMS_DATA_ROWS.filter(
-    (r) => normalize(r[1]) === projName
-  );
-
-  // 2. Partial match
-  if (!matched.length) {
-    matched = FMS_DATA_ROWS.filter((r) => {
-      const rp = normalize(r[1]);
-      return rp && (rp.includes(projName) || projName.includes(rp));
-    });
-  }
-
-  // 3. Try matching on client name instead of project
-  if (!matched.length) {
-    const clientName = normalize(client.name);
-    matched = FMS_DATA_ROWS.filter((r) => {
-      const rp = normalize(r[1]);
-      return rp && (rp.includes(clientName) || clientName.includes(rp));
-    });
-  }
-
-  // 4. Word-by-word overlap (≥2 significant words match)
-  if (!matched.length) {
-    const words = projName.split(/\s+/).filter((w) => w.length > 3);
-    matched = FMS_DATA_ROWS.filter((r) => {
-      const rp = normalize(r[1]);
-      const hits = words.filter((w) => rp.includes(w));
-      return hits.length >= 2;
-    });
-  }
-
-  if (!matched.length && FMS_DATA_ROWS.length === 1)
-    matched = FMS_DATA_ROWS;
-  if (!matched.length) return [];
-  return getFmsStepsForRow(matched[0]);
-}
 
       function overallStatus(steps) {
         if (!steps.length) return "pending";
@@ -2425,324 +1878,246 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
         return "pending";
       }
 
-      // ── HTML HELPERS ──────────────────────────────────
-      function esc(s) {
-        return String(s || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+      function resolveDocUrl(raw) {
+        if (!raw) return "";
+        const s = raw.trim();
+        const driveMatch = s.match(/\/d\/([a-zA-Z0-9_-]{15,})/);
+        if (driveMatch) return "https://drive.google.com/file/d/" + driveMatch[1] + "/view";
+        if (/^https?:\/\//i.test(s)) return s;
+        return "";
       }
-      function ts() {
-        return new Date().toLocaleString("en-IN", {
-          dateStyle: "short",
-          timeStyle: "short",
+
+      function extractUploadDocs(upload) {
+        if (!upload) return [];
+        const docs = [];
+        const seenUrls = new Set();
+        const urlRegex = /https?:\/\/\S+/g;
+        const segments = [];
+        let match, lastIndex = 0;
+        
+        while ((match = urlRegex.exec(upload)) !== null) {
+          const url = match[0].replace(/[)\]"'.,]+$/, "");
+          segments.push({ textBefore: upload.slice(lastIndex, match.index), url });
+          lastIndex = match.index + match[0].length;
+        }
+        const tail = upload.slice(lastIndex);
+        let tailConsumedAsName = false;
+
+        segments.forEach((seg, idx) => {
+          if (seenUrls.has(seg.url)) return;
+          seenUrls.add(seg.url);
+          let name = seg.textBefore.split("\n").pop().replace(/^[\s,;]+/, "").replace(/[\s,;:-]+$/, "").trim();
+          if (!name && idx === segments.length - 1) {
+            const afterText = tail.trim();
+            if (afterText && !/^https?:\/\//i.test(afterText)) {
+              const cleaned = afterText.replace(/^[\s,;:-]+/, "").trim();
+              if (cleaned) { name = cleaned; tailConsumedAsName = true; }
+            }
+          }
+          if (!name) name = "View document";
+          docs.push({ name: name, url: resolveDocUrl(seg.url) || seg.url });
         });
+        return docs;
       }
+
+      function getClients() { return clientObjectsList; }
+
+      function resolveLogoUrl(raw) {
+        if (!raw) return "";
+        const s = raw.trim();
+        if (s.match(/^https?:\/\/.+\.(png|jpg|jpeg|gif|svg|webp)/i)) return s;
+        const driveMatch = s.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
+        if (driveMatch) return "https://drive.google.com/thumbnail?id=" + driveMatch[1] + "&sz=w200";
+        return s.startsWith("http") ? s : "";
+      }
+
+      const COLORS = ["#2563EB", "#10B981", "#8B5CF6", "#F59E0B", "#EF4444", "#06B6D4"];
+      function ccolor(id) { return COLORS[(parseInt(id.replace("CLT-", "")) || 1) % COLORS.length]; }
+      function initials(name) { return (name || "?").split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2); }
+
+      function avatarHtml(client, size = 44, fontSize = 16) {
+        const logoUrl = resolveLogoUrl(client.logo);
+        const col = ccolor(client.id);
+        if (logoUrl) {
+          return '<div class="client-avatar" style="background:#fff;width:'+size+'px;height:'+size+'px;padding:3px;border:1px solid var(--border)">' +
+            '<img src="' + esc(logoUrl) + '" alt="' + esc(client.name) + ' logo" ' +
+            'onerror="this.parentElement.innerHTML=\'<span style=font-size:'+fontSize+'px;font-weight:700>'+esc(initials(client.name))+'</span>\';this.parentElement.style.background=\''+col+'22\';this.parentElement.style.color=\''+col+'\';" ' +
+            'style="width:100%;height:100%;object-fit:contain;border-radius:7px;">' +
+          '</div>';
+        }
+        return '<div class="client-avatar" style="background:'+col+'22;color:'+col+';width:'+size+'px;height:'+size+'px;font-size:'+fontSize+'px;font-weight:700">'+initials(client.name)+'</div>';
+      }
+
+      function bannerLogoHtml(client) {
+        const logoUrl = resolveLogoUrl(client.logo);
+        const col = ccolor(client.id);
+        if (logoUrl) {
+          return '<img src="' + esc(logoUrl) + '" alt="' + esc(client.logo) + ' logo" ' +
+            'onerror="this.outerHTML=\'<div class=\\\'logo-fallback\\\' style=\\\'background:'+col+'22;color:'+col+'\\\'>'+esc(initials(client.name))+'</div>\';" ' +
+            'style="height:52px;max-width:160px;object-fit:contain;border-radius:6px;">';
+        }
+        return '<div class="logo-fallback" style="background:'+col+'22;color:'+col+'">'+initials(client.name)+'</div>';
+      }
+
+      function esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+      function ts() { return new Date().toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" }); }
 
       function fmsTimelineHtml(steps) {
-        if (!steps || !steps.length)
-          return '<div class="empty-state"><div class="ei">📋</div><p>No FMS steps found for this client in the sheet.</p></div>';
-        return steps
-          .map((s, i) => {
-            const dc =
-              s.status === "done"
-                ? "done"
-                : s.status === "active"
-                  ? "active"
-                  : "pending";
-            const icon =
-              s.status === "done"
-                ? "✓"
-                : s.status === "active"
-                  ? "▶"
-                  : String(i + 1);
-            const cc =
-              s.status === "active"
-                ? "active-step"
-                : s.status === "done"
-                  ? "done-step"
-                  : "";
-            const badge =
-              s.status === "done"
-                ? '<span class="fms-step-badge badge-done">Completed</span>'
-                : s.status === "active"
-                  ? '<span class="fms-step-badge badge-active">In Progress</span>'
-                  : '<span class="fms-step-badge badge-pending">Pending</span>';
-            const dates = [
-              s.planned
-                ? `<span style="color:var(--text-muted)">📅 Planned: ${esc(s.planned)}</span>`
-                : "",
-              s.actual
-                ? `<span style="color:var(--accent-green)">✓ Actual: ${esc(s.actual)}</span>`
-                : "",
-            ]
-              .filter(Boolean)
-              .join("&nbsp;&nbsp;");
-            const noteHtml = s.note
-              ? `<div style="margin-top:6px;font-size:12px;color:var(--text-secondary);background:rgba(255,255,255,.03);border-radius:6px;padding:6px 8px;border-left:2px solid var(--accent-blue)">💬 ${esc(s.note)}</div>`
-              : "";
-            const docHtml =
-              s.docs && s.docs.length
-                ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">${s.docs
-                    .filter((d) => d.name)
-                    .map((d) =>
-                      d.url
-                        ? `<a href="${esc(d.url)}" target="_blank" class="doc-item" style="padding:6px 10px;max-width:300px;text-decoration:none"><div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div></div><span class="doc-viewer-badge">↗</span></a>`
-                        : `<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;display:inline-flex;align-items:center;gap:4px">📄 ${esc(d.name)}</span>`,
-                    )
-                    .join("")}</div>`
-                : "";
-            return `<div class="fms-timeline-item">
-      <div class="fms-dot ${dc}">${icon}</div>
-      <div class="fms-content ${cc}">
-        <div class="fms-step-num-lbl">Step ${i + 1}</div>
-        <div class="fms-step-header"><span class="fms-step-name">${esc(s.name)}</span>${badge}</div>
-        ${dates ? `<div style="margin-top:6px;font-size:11px;display:flex;flex-wrap:wrap;gap:12px">${dates}</div>` : ""}
-        ${noteHtml}${docHtml}
-      </div>
-    </div>`;
-          })
-          .join("");
+        if (!steps || !steps.length) return '<div class="empty-state"><div class="ei">📋</div><p>No operational process step data loaded.</p></div>';
+        return steps.map((s, i) => {
+          const dc = s.status === "done" ? "done" : s.status === "active" ? "active" : "pending";
+          const icon = s.status === "done" ? "✓" : s.status === "active" ? "▶" : String(i + 1);
+          const cc = s.status === "active" ? "active-step" : s.status === "done" ? "done-step" : "";
+          const badge = s.status === "done" ? '<span class="fms-step-badge badge-done">Completed</span>' : s.status === "active" ? '<span class="fms-step-badge badge-active">In Progress</span>' : '<span class="fms-step-badge badge-pending">Pending</span>';
+          const dates = [
+            s.planned ? '<span style="color:var(--text-muted)">📅 Planned: ' + esc(s.planned) + '</span>' : "",
+            s.actual ? '<span style="color:var(--accent-green)">✓ Actual: ' + esc(s.actual) + '</span>' : ""
+          ].filter(Boolean).join("&nbsp;&nbsp;");
+          const noteHtml = s.note ? '<div style="margin-top:6px;font-size:12px;color:var(--text-secondary);background:rgba(255,255,255,.03);border-radius:6px;padding:6px 8px;border-left:2px solid var(--accent-blue)">💬 ' + esc(s.note) + '</div>' : "";
+          const docHtml = s.docs && s.docs.length ? '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">' + s.docs.filter(d => d.name).map(d => d.url ? '<a href="' + esc(d.url) + '" target="_blank" class="doc-item" style="padding:6px 10px;max-width:300px;text-decoration:none"><div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px">📄</div><div class="doc-info"><div class="doc-name">' + esc(d.name) + '</div></div><span class="doc-viewer-badge">↗</span></a>' : '<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;display:inline-flex;align-items:center;gap:4px">📄 ' + esc(d.name) + '</span>').join("") + '</div>' : "";
+          
+          return '<div class="fms-timeline-item">' +
+            '<div class="fms-dot ' + dc + '">' + icon + '</div>' +
+            '<div class="fms-content ' + cc + '">' +
+              '<div class="fms-step-num-lbl">Step ' + (i + 1) + '</div>' +
+              '<div class="fms-step-header"><span class="fms-step-name">' + esc(s.name) + '</span>' + badge + '</div>' +
+              (dates ? '<div style="margin-top:6px;font-size:11px;display:flex;flex-wrap:wrap;gap:12px">' + dates + '</div>' : "") +
+              noteHtml + docHtml +
+            '</div>' +
+          '</div>';
+        }).join("");
       }
 
-      // Renders one flat, name-only list of doc-items (used for both
-      // the project-level docs block and the step-level docs block).
       function docsListHtml(docs, opts) {
         const adminMode = !!(opts && opts.adminMode);
         const badge = adminMode ? "📄 Open ↗" : "👁 View Only ↗";
-        return docs
-          .map((d) =>
-            d.url
-              ? `<a href="${esc(d.url)}" target="_blank" rel="noopener" class="doc-item"><div class="doc-icon" style="background:rgba(37,99,235,.1)">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div>${d.step ? `<div class="doc-meta">Step: ${esc(d.step)}</div>` : ""}</div><span class="doc-viewer-badge">${badge}</span></a>`
-              : `<div class="doc-item"><div class="doc-icon" style="background:rgba(100,116,139,.1)">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div>${d.step ? `<div class="doc-meta">Step: ${esc(d.step)}</div>` : ""}</div><span class="doc-viewer-badge">No Link</span></div>`,
-          )
-          .join("");
+        return docs.map(d => d.url ? '<a href="' + esc(d.url) + '" target="_blank" rel="noopener" class="doc-item"><div class="doc-icon" style="background:rgba(37,99,235,.1)">📄</div><div class="doc-info"><div class="doc-name">' + esc(d.name) + '</div>' + (d.step ? '<div class="doc-meta">Step: ' + esc(d.step) + '</div>' : "") + '</div><span class="doc-viewer-badge">' + badge + '</span></a>' : '<div class="doc-item"><div class="doc-icon" style="background:rgba(0,0,0,.05)">📄</div><div class="doc-info"><div class="doc-name">' + esc(d.name) + '</div>' + (d.step ? '<div class="doc-meta">Step: ' + esc(d.step) + '</div>' : "") + '</div><span class="doc-viewer-badge">No Link</span></div>').join("");
       }
 
-      // Builds the full Documents tab: a "Project Documents" section
-      // sourced from the Project Details sheet's Documents column,
-      // followed by a "Step Documents" section sourced from the FMS
-      // sheet's per-step Upload columns. Either section can be empty
-      // independently of the other.
       function allDocsHtml(client, steps, opts) {
         const adminMode = !!(opts && opts.adminMode);
-        const projectDocs = extractProjectDocs(client && client.docs).filter(
-          (d) => d.name,
-        );
-
+        const projectDocs = extractUploadDocs(client && client.docs).filter(d => d.name);
         const stepDocs = [];
-        (steps || []).forEach((s) =>
-          (s.docs || []).forEach((d) => {
-            if (d.name) stepDocs.push({ ...d, step: s.name });
-          }),
-        );
+        (steps || []).forEach(s => (s.docs || []).forEach(d => { if (d.name) stepDocs.push(Object.assign({}, d, { step: s.name })); }));
 
-        if (!projectDocs.length && !stepDocs.length)
-          return '<div class="empty-state"><div class="ei">📂</div><p>No documents found — none in the Project Details "Documents" column, and none in the FMS step Upload columns.</p></div>';
-
+        if (!projectDocs.length && !stepDocs.length) return '<div class="empty-state"><div class="ei">📂</div><p>No verified process documents found inside records.</p></div>';
         let html = "";
-       
-        html += '<div class="doc-section-label">Step Documents</div>';
-        html += stepDocs.length
-          ? docsListHtml(stepDocs, { adminMode })
-          : '<div class="empty-state" style="padding:20px"><p style="font-size:12px">No documents listed in the FMS sheet for this client.</p></div>';
-
+        if (projectDocs.length) {
+          html += '<div class="doc-section-label">General Project Documents</div>';
+          html += docsListHtml(projectDocs, { adminMode: adminMode });
+        }
+        if (stepDocs.length) {
+          html += '<div class="doc-section-label">Pipeline Step Documents</div>';
+          html += docsListHtml(stepDocs, { adminMode: adminMode });
+        }
         return html;
       }
-      
 
       function infoGridHtml(c) {
         return [
-          ["Client ID", c.id],
-          ["Client Name", c.name],
-          ["Project Name", c.project],
-          ["Email", c.email],
-          ["Phone Number", c.phone],
-          ["Start Date", c.startDate],
-          ["Expected Date", c.expectedDate],
-          ["PO Date", c.poDate],
-          ["PO Number", c.poNumber],
-          ["PO Amount", c.poAmount],
-        ]
-          .map(
-            ([l, v]) =>
-              `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${esc(v || "—")}</div></div>`,
-          )
-          .join("");
+          ["Client ID", c.id], ["Client Name", c.name], ["Project Name", c.project],
+          ["Email", c.email], ["Phone Number", c.phone], ["Start Date", c.startDate],
+          ["Expected Date", c.expectedDate], ["PO Date", c.poDate],
+          ["PO Number", c.poNumber], ["PO Amount", c.poAmount]
+        ].map(arr => '<div class="info-item"><div class="info-label">' + arr[0] + '</div><div class="info-value">' + esc(arr[1] || "—") + '</div></div>').join("");
       }
 
-      function cardStatusHtml(status) {
-        const m = {
-          active: ["status-active", "● Active"],
-          pending: ["status-pending", "◎ Pending"],
-          completed: ["status-completed", "✓ Done"],
-        };
-        return m[status] || m.pending;
-      }
-
-      // ── CLIENT CARD (uses avatarHtml for logo support) ─
       function clientCardHtml(c, onclick) {
-        const steps = getFmsSteps(c),
-          status = overallStatus(steps);
-        const [sc, sl] = cardStatusHtml(status);
-        const done = steps.filter((s) => s.status === "done").length;
-        const dots = steps
-          .map((s) => `<div class="fms-step-dot ${s.status}"></div>`)
-          .join("");
-        return `<div class="client-card" onclick="${onclick}">
-    <div class="client-card-header">
-      ${avatarHtml(c, 44, 16)}
-      <div class="client-card-info">
-        <h3>${esc(c.name || "—")}</h3>
-        <p>${esc(c.project || c.email || "—")}</p>
-        <span class="client-id">${c.id}</span>
-      </div>
-      <span class="card-status ${sc}">${sl}</span>
-    </div>
-    <div class="fms-mini">${dots || '<span style="font-size:11px;color:var(--text-muted)">No steps</span>'}</div>
-    <div class="card-footer"><span>${done}/${steps.length} steps done</span><span class="lock-badge">🔒 ${c.id}</span></div>
-  </div>`;
+        const steps = getFmsSteps(c), status = overallStatus(steps);
+        const m = { active: ["status-active", "● Active"], pending: ["status-pending", "◎ Pending"], completed: ["status-completed", "✓ Done"] };
+        const [sc, sl] = m[status] || m.pending;
+        const done = steps.filter(s => s.status === "done").length;
+        const dots = steps.map(s => '<div class="fms-step-dot ' + s.status + '"></div>').join("");
+        
+        return '<div class="client-card" onclick="' + onclick + '">' +
+          '<div class="client-card-header">' +
+            avatarHtml(c, 44, 16) +
+            '<div class="client-card-info">' +
+              '<h3>' + esc(c.name || "—") + '</h3>' +
+              '<p>' + esc(c.project || c.email || "—") + '</p>' +
+              '<span class="client-id">' + c.id + '</span>' +
+            '</div>' +
+            '<span class="card-status ' + sc + '">' + sl + '</span>' +
+          '</div>' +
+          '<div class="fms-mini">' + (dots || '<span style="font-size:11px;color:var(--text-muted)">No steps</span>') + '</div>' +
+          '<div class="card-footer"><span>' + done + '/' + steps.length + ' targets hit</span><span class="lock-badge">🔒 ' + c.id + '</span></div>' +
+        '</div>';
       }
 
-      // ── STATS ─────────────────────────────────────────
       function updateStats() {
         document.getElementById("sv-links").textContent = LS.stats.links;
         document.getElementById("sv-proj").textContent = LS.stats.proj;
         document.getElementById("sv-clients").textContent = LS.stats.clients;
-        document.getElementById("sv-cards").textContent = projectRows.length;
-      }
-      function saveStats() {
-        LS.stats.links =
-          parseInt(document.getElementById("es-links").value) || 0;
-        LS.stats.proj = parseInt(document.getElementById("es-proj").value) || 0;
-        LS.stats.clients =
-          parseInt(document.getElementById("es-clients").value) || 0;
-        saveLS();
-        updateStats();
-        toast("Stats saved");
+        document.getElementById("sv-cards").textContent = clientObjectsList.length;
       }
 
-      // ── AUTH ──────────────────────────────────────────
+      function saveStats() {
+        LS.stats.links = parseInt(document.getElementById("es-links").value) || 0;
+        LS.stats.proj = parseInt(document.getElementById("es-proj").value) || 0;
+        LS.stats.clients = parseInt(document.getElementById("es-clients").value) || 0;
+        saveLS();
+        updateStats();
+        toast("Metrics committed to server.");
+      }
+
       function setRole(r, el) {
         loginRole = r;
-        document
-          .querySelectorAll(".role-tab")
-          .forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".role-tab").forEach(t => t.classList.remove("active"));
         el.classList.add("active");
-        document.getElementById("lhint").innerHTML =
-          r === "admin"
-            ? "<strong>Admin:</strong> username <code>admin</code> / password <code>admin123</code>"
-            : "<strong>Client:</strong> Use Client ID (e.g. <code>CLT-001</code>) and password set by admin.";
       }
+
       function doLogin() {
-        const u = document.getElementById("lu").value.trim(),
-          p = document.getElementById("lp").value.trim();
+        const u = document.getElementById("lu").value.trim(), p = document.getElementById("lp").value.trim();
         if (loginRole === "admin") {
-          if (u === "admin" && p === "admin123") {
+          if (u === "Admin" && p === "Aispl@2026") {
             curUser = "admin";
+            toast("Admin panel unlocked");
             showAdmin();
-          } else toast("Invalid credentials", "error");
+          } else toast("Invalid administrative profile parameters", "error");
         } else {
           const uid = u.toUpperCase();
-          if (!LS.pw[uid]) {
-            toast("No password set for this client ID", "error");
-            return;
-          }
-          if (LS.pw[uid] !== p) {
-            toast("Incorrect password", "error");
-            return;
-          }
+          if (!LS.pw[uid]) { toast("No tracking password mapped for this key", "error"); return; }
+          if (LS.pw[uid] !== p) { toast("Incorrect account verification signature", "error"); return; }
           const idx = parseInt(uid.replace("CLT-", "")) - 1;
-          if (idx < 0 || idx >= projectRows.length) {
-            toast("Client not found in sheet. Ask admin to refresh.", "error");
-            return;
-          }
+          if (idx < 0 || idx >= clientObjectsList.length) { toast("Client index mapping out of data array boundaries", "error"); return; }
           curUser = uid;
-          showClientPortal(buildClient(projectRows[idx], idx));
+          showClientPortal(clientObjectsList[idx]);
         }
       }
+
       function logout() {
-        curUser = null;
-        curCid = null;
+        curUser = null; curCid = null;
         document.getElementById("lu").value = "";
         document.getElementById("lp").value = "";
         showScreen("screen-login");
       }
 
-      // ── SCREENS ───────────────────────────────────────
       function showScreen(id) {
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
+        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
         document.getElementById(id).classList.add("active");
       }
 
-      // ── ADMIN ─────────────────────────────────────────
-      async function showAdmin() {
+      function showAdmin() {
         showScreen("screen-admin");
-        await reload();
-      }
-
-      async function reload() {
-        setSyncState("spin", "Loading data from Google Sheets…");
-        try {
-          await loadSheets();
-          updateStats();
-          renderHomeCards();
-          renderAllCards();
-          renderAccess();
-          updateMsgBadge();
-          if (fmsLoadError) {
-            setSyncState(
-              "err",
-              `Project data synced OK. FMS sheet problem: ${fmsLoadError}`,
-            );
-            toast("FMS sheet issue — see Diagnostics tab: " + fmsLoadError, "error");
-          } else {
-            setSyncState(
-              "",
-              `Last synced: ${new Date().toLocaleTimeString("en-IN")} · ${FMS_STEPS_DEF.length} FMS steps, ${FMS_DATA_ROWS.length} FMS rows`,
-            );
-          }
-        } catch (e) {
-          const hint = e.message.includes("Timeout")
-            ? "Timed out. Make sure both sheets are public → Share → Anyone with link → Viewer."
-            : "Could not reach Google Sheets. Open this file in Chrome (not Firefox/Safari) and ensure both sheets are public. Error: " +
-              e.message;
-          setSyncState("err", hint);
-          toast("Sheet error: " + e.message, "error");
-        }
+        reload();
       }
 
       function setSyncState(cls, msg) {
-        const d = document.getElementById("sdot"),
-          m = document.getElementById("smsg");
+        const d = document.getElementById("sdot"), m = document.getElementById("smsg");
         if (!d) return;
         d.className = "sync-dot " + (cls || "");
         m.textContent = msg;
       }
 
       function aNav(page, el) {
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((n) => n.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
         if (el) el.classList.add("active");
         else {
-          const m = {
-            home: 0,
-            clients: 1,
-            messages: 2,
-            stats: 3,
-            access: 4,
-            debug: 5,
-          };
+          const m = { home: 0, clients: 1, messages: 2, stats: 3, access: 4, debug: 5 };
           const items = document.querySelectorAll(".nav-item");
           if (items[m[page]]) items[m[page]].classList.add("active");
         }
-        document
-          .querySelectorAll(".admin-page")
-          .forEach((p) => p.classList.remove("active"));
+        document.querySelectorAll(".admin-page").forEach((p) => p.classList.remove("active"));
         const pg = document.getElementById("admin-" + page);
         if (pg) pg.classList.add("active");
         if (page === "messages") renderMsgCenter();
@@ -2758,346 +2133,136 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
       function renderDebug() {
         const el = document.getElementById("debug-content");
         if (!el) return;
-        const card = (title, content) =>
-          `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px"><div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--accent-blue-light)">${title}</div>${content}</div>`;
-        const kv = (label, val) =>
-          `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-muted);min-width:160px;flex-shrink:0">${label}</span><span style="color:var(--text-primary);word-break:break-all;font-family:'JetBrains Mono',monospace">${esc(String(val || "—"))}</span></div>`;
+        const card = (title, content) => '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px"><div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--accent-blue-light)">'+title+'</div>'+content+'</div>';
+        const kv = (label, val) => '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text-muted);min-width:160px;flex-shrink:0">'+label+'</span><span style="color:var(--text-primary);word-break:break-all;font-family:\'JetBrains Mono\',monospace">'+esc(String(val || "—"))+'</span></div>';
 
-        const fmsStatusBanner = fmsLoadError
-          ? `<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--accent-red)">
-               <strong>⚠️ FMS sheet did not load correctly:</strong><br/>${esc(fmsLoadError)}
-               <div style="margin-top:8px;font-size:12px;color:var(--text-secondary)">
-                 Open the sheet directly and confirm this exact tab is shared as "Anyone with the link → Viewer":<br/>
-                 <a href="${esc(lastFmsUrl)}" target="_blank" style="color:var(--accent-blue-light)">${esc(lastFmsUrl)}</a>
-               </div>
-             </div>`
-          : `<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--accent-green)">✅ FMS sheet loaded successfully.</div>`;
+        const fmsStatusBanner = fmsLoadError 
+          ? '<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--accent-red)"><strong>⚠️ Synchronization error:</strong><br/>'+esc(fmsLoadError)+'</div>'
+          : '<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--accent-green)">✅ Matrix relational indices mapped dynamically to server rows.</div>';
 
-        const rawGrid = !fmsRaw.length
-          ? ""
-          : `<div style="overflow-x:auto;margin-top:10px;margin-bottom:14px;border:1px solid var(--border);border-radius:8px">
-              <table style="border-collapse:collapse;font-size:11px;font-family:'JetBrains Mono',monospace;white-space:nowrap">
-                ${fmsRaw
-                  .map(
-                    (row, ri) =>
-                      `<tr>${
-                        `<td style="padding:4px 8px;color:var(--text-muted);border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:sticky;left:0;background:var(--bg-card)">row[${ri}]</td>` +
-                        row
-                          .map(
-                            (cell, ci) =>
-                              `<td style="padding:4px 8px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--text-primary)" title="col[${ci}]">${esc(cell || "")}</td>`,
-                          )
-                          .join("")
-                      }</tr>`,
-                  )
-                  .join("")}
-              </table>
-            </div>`;
+        const rawGrid = !fmsRawMatrix.length ? "" : '<div style="overflow-x:auto;margin-top:10px;margin-bottom:14px;border:1px solid var(--border);border-radius:8px"><table style="border-collapse:collapse;font-size:11px;font-family:\'JetBrains Mono\',monospace;white-space:nowrap">'+fmsRawMatrix.map((row, ri) => '<tr><td style="padding:4px 8px;color:var(--text-muted);border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:sticky;left:0;background:var(--bg-card)">row['+ri+']</td>'+row.map((cell, ci) => '<td style="padding:4px 8px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--text-primary)" title="col['+ci+']">'+esc(cell || "")+'</td>').join("")+'</tr>').join("")+'</table></div>';
 
-        const fmsSection = !fmsRaw.length
-          ? '<p style="color:var(--accent-red);font-size:13px">FMS sheet not loaded yet (0 rows). See error banner above.</p>'
-          : [
-              kv("FMS sheet ID / gid", `${FMS_ID} / ${FMS_GID}`),
-              kv("Total raw rows in FMS sheet", fmsRaw.length),
-              kv(
-                "Row 1 (idx 0) — What/Steps",
-                (fmsRaw[0] || []).filter((v) => v).join(" | "),
-              ),
-              kv(
-                "Row 5 (idx 4) — Sub-headers",
-                (fmsRaw[4] || []).filter((v) => v).join(" | "),
-              ),
-              kv("FMS_DATA_ROWS count", FMS_DATA_ROWS.length),
-              ...FMS_DATA_ROWS.map((r, i) =>
-                kv(`  Data row ${i} — col[1]`, r[1] || "(empty)"),
-              ),
-              kv("FMS_STEPS_DEF count", FMS_STEPS_DEF.length),
-              ...FMS_STEPS_DEF.map((s, i) =>
-                kv(
-                  `  Step ${i + 1}: ${s.name}`,
-                  `Planned:col${s.plannedCol} Actual:col${s.actualCol} Status:col${s.statusCol} Upload:col${s.uploadCol}`,
-                ),
-              ),
-            ].join("");
+        const fmsSection = [
+          kv("Total raw rows in FMS matrix", fmsRawMatrix.length),
+          kv("FMS_DATA_ROWS allocation count", FMS_DATA_ROWS.length),
+          kv("FMS_STEPS_DEF active count", FMS_STEPS_DEF.length)
+        ].join("");
 
-        const projSection = !projectRows.length
-          ? '<p style="color:var(--accent-red);font-size:13px">Project sheet not loaded yet.</p>'
-          : [
-              kv("Total project rows", projectRows.length),
-              kv(
-                "Project Details sheet columns",
-                Object.keys(projectRows[0] || {}).join(" | "),
-              ),
-              ...projectRows.map((r, i) => {
-                const c = buildClient(r, i);
-                return kv(
-                  `Row ${i} — ${c.id}`,
-                  `name="${c.name}" project="${c.project}" logo="${c.logo || "(none)"}" docs="${c.docs || "(none)"}"`,
-                );
-              }),
-            ].join("");
+        const projSection = [
+          kv("Total synchronized project rows", clientObjectsList.length),
+          clientObjectsList.map(c => kv(c.id + ' Node Mapped', 'name="' + c.name + '" project="' + c.project + '"')).join("")
+        ].join("");
 
-        const matchSection = getClients()
-          .map((c) => {
-            const steps = getFmsSteps(c);
-            const projName = (c.project || c.name || "").toLowerCase().trim();
-            const fmsNames = FMS_DATA_ROWS.map((r) =>
-              (r[1] || "").toLowerCase().trim(),
-            );
-            const exactMatch = fmsNames.includes(projName);
-            const partialMatch =
-              !exactMatch &&
-              fmsNames.some(
-                (n) => n.includes(projName) || projName.includes(n),
-              );
-            const logoStatus = c.logo
-              ? `logo="${c.logo}" → resolved="${resolveLogoUrl(c.logo)}"`
-              : "no logo";
-            const projectDocs = extractProjectDocs(c.docs).filter(
-              (d) => d.name,
-            );
-            const docsStatus = c.docs
-              ? `docs cell="${c.docs}" → parsed ${projectDocs.length} project doc(s)`
-              : "no Documents value for this client";
-            return kv(
-              `${c.id} — "${c.project}"`,
-              (steps.length
-                ? `✅ ${steps.length} steps`
-                : exactMatch
-                  ? "⚠️ name match no steps"
-                  : partialMatch
-                    ? "⚠️ partial match no steps"
-                    : `❌ no match`) + ` | ${logoStatus} | ${docsStatus}`,
-            );
-          })
-          .join("");
-
-        const docsSection = getClients()
-          .map((c) => {
-            const steps = getFmsSteps(c);
-            const projectDocs = extractProjectDocs(c.docs).filter(
-              (d) => d.name,
-            );
-            let out = "";
-            if (projectDocs.length) {
-              const parsed = projectDocs
-                .map((d) =>
-                  d.url
-                    ? `✅ "${d.name}" → ${d.url}`
-                    : `⚠️ "${d.name}" → no link`,
-                )
-                .join("<br/>");
-              out +=
-                kv(`${c.id} · Project Documents`, "") +
-                `<div style="padding:0 0 6px 0;font-size:11px;color:var(--text-secondary)">${parsed}</div>`;
-            }
-            if (!steps.length) return out;
-            out += steps
-              .map((s) => {
-                if (!s.docs || !s.docs.length) return "";
-                const parsed = s.docs
-                  .map((d) =>
-                    d.url
-                      ? `✅ "${d.name}" → ${d.url}`
-                      : `⚠️ "${d.name}" → no link`,
-                  )
-                  .join("<br/>");
-                return (
-                  kv(`${c.id} · ${s.name}`, "") +
-                  `<div style="padding:0 0 6px 0;font-size:11px;color:var(--text-secondary)">${parsed}</div>`
-                );
-              })
-              .join("");
-            return out;
-          })
-          .join("");
-
-        el.innerHTML =
-          fmsStatusBanner +
-          [
-            card("FMS Sheet — Raw Data", fmsSection + rawGrid),
-            card("Project Details Sheet (incl. logos + documents)", projSection),
-            card(
-              "Project → FMS Match + Logo/Docs Status",
-              matchSection ||
-                '<p style="color:var(--text-muted);font-size:13px">No clients loaded.</p>',
-            ),
-            card(
-              "Document Link Parsing Preview",
-              docsSection ||
-                '<p style="color:var(--text-muted);font-size:13px">No documents found in any Documents/Upload columns yet.</p>',
-            ),
-          ].join("");
+        el.innerHTML = fmsStatusBanner + card("FMS Horizontal Processing Sheets Data", fmsSection + rawGrid) + card("Client Property Details Setup Fields", projSection);
       }
 
       function renderHomeCards() {
-        const el = document.getElementById("home-cards"),
-          c = getClients().slice(0, 6);
-        el.innerHTML = c.length
-          ? c.map((x) => clientCardHtml(x, `openDetail('${x.id}')`)).join("")
-          : '<div class="empty-state" style="grid-column:1/-1"><div class="ei">📋</div><p>No data in Project Details sheet yet.</p></div>';
+        const el = document.getElementById("home-cards"), c = clientObjectsList.slice(0, 6);
+        el.innerHTML = c.length ? c.map(x => clientCardHtml(x, "openDetail('" + x.id + "')")).join("") : '<div class="empty-state" style="grid-column:1/-1"><div class="ei">📋</div><p>No project tracking parameters found inside database records.</p></div>';
       }
       function renderAllCards() {
-        const el = document.getElementById("all-cards"),
-          nm = document.getElementById("no-clients"),
-          c = getClients();
-        if (!c.length) {
-          el.innerHTML = "";
-          nm.style.display = "block";
-          return;
-        }
+        const el = document.getElementById("all-cards"), nm = document.getElementById("no-clients"), c = clientObjectsList;
+        if (!c.length) { el.innerHTML = ""; nm.style.display = "block"; return; }
         nm.style.display = "none";
-        el.innerHTML = c
-          .map((x) => clientCardHtml(x, `openDetail('${x.id}')`))
-          .join("");
+        el.innerHTML = c.map(x => clientCardHtml(x, "openDetail('" + x.id + "')")).join("");
       }
 
-      // ── DETAIL ────────────────────────────────────────
       function openDetail(id) {
         const idx = parseInt(id.replace("CLT-", "")) - 1;
-        if (idx < 0 || idx >= projectRows.length) return;
-        const c = buildClient(projectRows[idx], idx);
+        if (idx < 0 || idx >= clientObjectsList.length) return;
+        const c = clientObjectsList[idx];
         curCid = id;
         document.getElementById("dn").textContent = c.name || "—";
-        document.getElementById("ds").textContent =
-          `${id} · ${c.project || ""}`;
-        document.getElementById("d-msgname").textContent =
-          "— " + (c.name || id);
-        const steps = getFmsSteps(c),
-          status = overallStatus(steps);
+        document.getElementById("ds").textContent = id + " · " + (c.project || "");
+        document.getElementById("d-msgname").textContent = "— " + (c.name || id);
+        const steps = getFmsSteps(c), status = overallStatus(steps);
         const [sc, sl] = cardStatusHtml(status);
         const db = document.getElementById("dbadge");
-        db.className = "card-status " + sc;
-        db.textContent = sl;
+        db.className = "card-status " + sc; db.textContent = sl;
+        
         document.getElementById("d-fms").innerHTML = fmsTimelineHtml(steps);
-        document.getElementById("d-docs").innerHTML = allDocsHtml(c, steps, {
-          adminMode: true,
-        });
+        document.getElementById("d-docs").innerHTML = allDocsHtml(c, steps, { adminMode: true });
         document.getElementById("d-info").innerHTML = infoGridHtml(c);
         renderMsgsEl("d-msgs", id);
         resetTabs("screen-client-detail");
         showScreen("screen-client-detail");
       }
-      function closeDetail() {
-        showScreen("screen-admin");
-        aNav("clients", null);
-        renderAllCards();
-      }
+      function closeDetail() { showScreen("screen-admin"); aNav("clients", null); renderAllCards(); }
 
-      // ── CLIENT PORTAL ─────────────────────────────────
       function showClientPortal(client) {
         showScreen("screen-client");
-
-        // Update top-right user avatar
         const av = document.getElementById("p-av");
         const logoUrl = resolveLogoUrl(client.logo);
         const col = ccolor(client.id);
+        
         if (logoUrl) {
-          av.innerHTML = `<img src="${esc(logoUrl)}" alt="logo"
-      onerror="this.parentElement.innerHTML='${esc(initials(client.name))}';this.parentElement.style.background='${col}';"
-      style="width:100%;height:100%;object-fit:contain;">`;
-          av.style.background = "#fff";
-          av.style.padding = "2px";
+          av.innerHTML = '<img src="' + esc(logoUrl) + '" alt="logo" onerror="this.parentElement.innerHTML=\'' + esc(initials(client.name)) + '\';this.parentElement.style.background=\'' + col + '\';" style="width:100%;height:100%;object-fit:contain;">';
+          av.style.background = "#fff"; av.style.padding = "2px";
         } else {
-          av.innerHTML = initials(client.name);
-          av.style.background = col;
-          av.style.padding = "";
+          av.innerHTML = initials(client.name); av.style.background = col; av.style.padding = "";
         }
-
         document.getElementById("p-name").textContent = client.name;
-        document.getElementById("p-welcome").textContent =
-          "Welcome, " + client.name + "!";
-
-        // Logo banner
-        const banner = document.getElementById("p-logo-banner");
-        const imgWrap = document.getElementById("p-logo-img-wrap");
+        document.getElementById("p-welcome").textContent = "Welcome, " + client.name + "!";
+        
+        const banner = document.getElementById("p-logo-banner"), imgWrap = document.getElementById("p-logo-img-wrap");
         document.getElementById("p-banner-name").textContent = client.name;
-        document.getElementById("p-banner-project").textContent =
-          client.project || "Your Project";
+        document.getElementById("p-banner-project").textContent = client.project || "Your Workspace";
         imgWrap.innerHTML = bannerLogoHtml(client);
         banner.style.display = "flex";
-
         renderPortalCards(client);
       }
 
       function renderPortalCards(myClient) {
-        const grid = document.getElementById("p-cards"),
-          clients = getClients();
-        if (!clients.length) {
-          grid.innerHTML =
-            '<div class="empty-state"><div class="ei">⏳</div><p>Loading…</p></div>';
-          return;
-        }
-        grid.innerHTML = clients
-          .map((c) => {
-            const mine = c.id === myClient.id,
-              col = ccolor(c.id);
-            if (mine) {
-              const steps = getFmsSteps(c),
-                done = steps.filter((s) => s.status === "done").length;
-              return `<div class="portal-card unlocked" onclick="openClientCard('${c.id}')">
-        <div class="client-card-header">
-          ${avatarHtml(c, 44, 16)}
-          <div class="client-card-info"><h3>${esc(c.name)}</h3><p>${esc(c.project || "Your Project")}</p><span class="client-id">${c.id}</span></div>
-        </div>
-        <div class="fms-mini">${steps.map((s) => `<div class="fms-step-dot ${s.status}"></div>`).join("") || '<span style="font-size:11px;color:var(--text-muted)">No steps</span>'}</div>
-        <div class="card-footer"><span>🔓 ${done}/${steps.length} steps done</span><span>→ Open</span></div>
-      </div>`;
-            }
-            return `<div class="portal-card locked">
-      <div class="client-card-header">
-        <div class="client-avatar" style="background:rgba(255,255,255,.05);color:var(--text-muted)">?</div>
-        <div class="client-card-info"><h3 style="color:var(--text-muted)">Private Client</h3><p style="color:var(--text-muted)">Access Restricted</p></div>
-      </div>
-      <div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">Not accessible</div></div>
-    </div>`;
-          })
-          .join("");
+        const grid = document.getElementById("p-cards"), clients = clientObjectsList;
+        if (!clients.length) { grid.innerHTML = '<div class="empty-state"><p>Accessing cloud metadata fields...</p></div>'; return; }
+        
+        grid.innerHTML = clients.map(c => {
+          if (c.id === myClient.id) {
+            const steps = getFmsSteps(c), done = steps.filter(s => s.status === "done").length;
+            return '<div class="portal-card unlocked" onclick="openClientCard(\'' + c.id + '\')">' +
+              '<div class="client-card-header">' +
+                avatarHtml(c, 44, 16) +
+                '<div class="client-card-info"><h3>' + esc(c.name) + '</h3><p>' + esc(c.project || "Your Project") + '</p><span class="client-id">' + c.id + '</span></div>' +
+              '</div>' +
+              '<div class="fms-mini">' + steps.map(s => '<div class="fms-step-dot ' + s.status + '"></div>').join("") + '</div>' +
+              '<div class="card-footer"><span>🔓 ' + done + '/' + steps.length + ' milestones reached</span><span>Open →</span></div>' +
+            '</div>';
+          }
+          return '<div class="portal-card locked">' +
+            '<div class="client-card-header">' +
+              '<div class="client-avatar" style="background:rgba(255,255,255,.05);color:var(--text-muted)">?</div>' +
+              '<div class="client-card-info"><h3 style="color:var(--text-muted)">Private Workspace</h3><p style="color:var(--text-muted)">Access Denied</p></div>' +
+            '</div>' +
+            '<div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">Restricted</div></div>' +
+          '</div>';
+        }).join("");
       }
 
       function openClientCard(id) {
         const idx = parseInt(id.replace("CLT-", "")) - 1;
-        if (idx < 0 || idx >= projectRows.length) return;
-        const c = buildClient(projectRows[idx], idx);
+        if (idx < 0 || idx >= clientObjectsList.length) return;
+        const c = clientObjectsList[idx];
         curCid = id;
         document.getElementById("cc-name").textContent = c.name || "—";
-        document.getElementById("cc-sub").textContent =
-          `${id} · ${c.project || ""}`;
+        document.getElementById("cc-sub").textContent = id + " · " + (c.project || "");
         const steps = getFmsSteps(c);
         document.getElementById("cc-fms-tl").innerHTML = fmsTimelineHtml(steps);
-        document.getElementById("cc-docs-list").innerHTML = allDocsHtml(
-          c,
-          steps,
-        );
+        document.getElementById("cc-docs-list").innerHTML = allDocsHtml(c, steps);
         document.getElementById("cc-info-grid").innerHTML = infoGridHtml(c);
         renderMsgsEl("cc-msgs", id);
         resetTabs("screen-client-card");
         showScreen("screen-client-card");
       }
 
-      // ── MESSAGES ──────────────────────────────────────
       function renderMsgsEl(elId, cid) {
-        const el = document.getElementById(elId),
-          msgs = LS.msgs[cid] || [];
-        if (!msgs.length) {
-          el.innerHTML =
-            '<div class="empty-state" style="padding:24px"><div class="ei" style="font-size:28px">💬</div><p>No messages yet.</p></div>';
-          return;
-        }
-        el.innerHTML = msgs
-          .map(
-            (m) => `<div class="message-bubble ${m.from}">
-    <span class="bubble-sender">${m.from === "admin" ? "🛡️ Admin" : "👤 Client"}</span>
-    <div class="bubble-text">${esc(m.text)}</div>
-    <span class="bubble-time">${m.time}</span>
-  </div>`,
-          )
-          .join("");
+        const el = document.getElementById(elId), msgs = LS.msgs[cid] || [];
+        if (!msgs.length) { el.innerHTML = '<div class="empty-state" style="padding:24px"><p>Secure dialogue channel open.</p></div>'; return; }
+        el.innerHTML = msgs.map(m => '<div class="message-bubble ' + m.from + '"><span class="bubble-sender">' + (m.from === "admin" ? "🛡️ Admin" : "👤 Client") + '</span><div class="bubble-text">' + esc(m.text) + '</div><span class="bubble-time">' + m.time + '</span></div>').join("");
         el.scrollTop = el.scrollHeight;
       }
       function pushMsg(cid, from, text) {
         if (!LS.msgs[cid]) LS.msgs[cid] = [];
-        LS.msgs[cid].push({ from, text, time: ts() });
+        LS.msgs[cid].push({ from: from, text: text, time: ts() });
         saveLS();
       }
       function sendAdmin() {
@@ -3105,176 +2270,106 @@ FMS_DATA_ROWS = fmsRaw.slice(5).filter((r) => r.some((v) => v));
         if (!t || !curCid) return;
         pushMsg(curCid, "admin", t);
         document.getElementById("a-inp").value = "";
-        renderMsgsEl("d-msgs", curCid);
-        updateMsgBadge();
-        toast("Message sent");
+        renderMsgsEl("d-msgs", curCid); updateMsgBadge(); toast("Message sent");
       }
       function sendClient() {
         const t = document.getElementById("c-inp").value.trim();
         if (!t || !curCid) return;
         pushMsg(curCid, "client", t);
         document.getElementById("c-inp").value = "";
-        renderMsgsEl("cc-msgs", curCid);
-        toast("Message sent");
+        renderMsgsEl("cc-msgs", curCid); toast("Message sent");
       }
       function updateMsgBadge() {
         const n = Object.values(LS.msgs).reduce((s, m) => s + m.length, 0);
         const b = document.getElementById("mbadge");
         if (!b) return;
-        b.style.display = n ? "inline-flex" : "none";
-        b.textContent = n;
+        b.style.display = n ? "inline-flex" : "none"; b.textContent = n;
       }
       function renderMsgCenter() {
-        const el = document.getElementById("msg-list-el"),
-          nm = document.getElementById("no-msgs");
-        const entries = Object.entries(LS.msgs).filter(([, m]) => m.length > 0);
-        if (!entries.length) {
-          el.innerHTML = "";
-          nm.style.display = "block";
-          return;
-        }
+        const el = document.getElementById("msg-list-el"), nm = document.getElementById("no-msgs");
+        const entries = Object.entries(LS.msgs).filter(arr => arr[1].length > 0);
+        if (!entries.length) { el.innerHTML = ""; nm.style.display = "block"; return; }
         nm.style.display = "none";
-        const clients = getClients();
-        el.innerHTML = entries
-          .map(([cid, msgs]) => {
-            const c = clients.find((x) => x.id === cid) || {
-              name: cid,
-              id: cid,
-            };
-            const last = msgs[msgs.length - 1];
-            return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer" onclick="openDetail('${cid}')">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        ${avatarHtml(c, 36, 13)}
-        <div><div style="font-weight:600;font-size:14px">${esc(c.name || cid)}</div><div style="font-size:11px;color:var(--text-muted)">${cid} · ${msgs.length} messages</div></div>
-        <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${last.time}</span>
-      </div>
-      <div style="font-size:13px;color:var(--text-secondary);padding:10px;background:rgba(255,255,255,.03);border-radius:8px">${esc(last.text)}</div>
-    </div>`;
-          })
-          .join("");
+        el.innerHTML = entries.map(arr => {
+          const cid = arr[0], msgs = arr[1];
+          const c = clientObjectsList.find(x => x.id === cid) || { name: cid, id: cid };
+          const last = msgs[msgs.length - 1];
+          return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer" onclick="openDetail(\'' + cid + '\')">' +
+            '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">' +
+              avatarHtml(c, 36, 13) +
+              '<div><div style="font-weight:600;font-size:14px">' + esc(c.name || cid) + '</div><div style="font-size:11px;color:var(--text-muted)">' + cid + ' · ' + msgs.length + ' interactions</div></div>' +
+              '<span style="margin-left:auto;font-size:11px;color:var(--text-muted)">' + last.time + '</span>' +
+            '</div>' +
+            '<div style="font-size:13px;color:var(--text-secondary);padding:10px;background:rgba(255,255,255,.03);border-radius:8px">' + esc(last.text) + '</div>' +
+          '</div>';
+        }).join("");
       }
 
-      // ── CLIENT ACCESS ─────────────────────────────────
-   function renderAccess() {
-  const el = document.getElementById("access-list"),
-    clients = getClients();
-  if (!clients.length) {
-    el.innerHTML =
-      '<div class="empty-state"><div class="ei">⏳</div><p>No clients loaded yet. Click Refresh on Dashboard.</p></div>';
-    return;
-  }
-  el.innerHTML = clients
-    .map((c) => {
-      const hasPassword = !!LS.pw[c.id];
-      // If a password exists, do not render a button to change it
-      const buttonHtml = hasPassword 
-        ? `<span style="font-size: 12px; color: var(--text-muted); padding: 7px 14px;">🔒 Password Locked</span>`
-        : `<button class="btn btn-primary btn-sm" onclick="openPassModal('${c.id}','${esc(c.name || "")}')">Set Password</button>`;
+      function renderAccess() {
+        const el = document.getElementById("access-list"), clients = clientObjectsList;
+        if (!clients.length) { el.innerHTML = '<div class="empty-state"><p>No data sets identified down pipeline paths.</p></div>'; return; }
+        el.innerHTML = clients.map(c => {
+          return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px">' +
+            avatarHtml(c, 38, 13) +
+            '<div style="flex:1"><div style="font-weight:600;font-size:14px">' + esc(c.name || "—") + '</div>' +
+              '<div style="font-size:11px;color:var(--text-muted)">${c.id} · ' + esc(c.project || "—") + '</div></div>' +
+            '<div style="font-size:12px;color:var(--text-muted);font-family:\'JetBrains Mono\',monospace;min-width:100px;text-align:right">' +
+              (LS.pw[c.id.toUpperCase()] ? "✅ Key Generated" : "⚠️ No Key Set") + '</div>' +
+            '<button class="btn btn-ghost btn-sm" onclick="openPassModal(\'' + c.id + '\',\'' + esc(c.name || "") + '\')">' +
+              (LS.pw[c.id.toUpperCase()] ? "Change" : "Set") + ' Password</button>' +
+          '</div>';
+        }).join("");
+      }
 
-      return `
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px">
-          ${avatarHtml(c, 38, 13)}
-          <div style="flex:1">
-            <div style="font-weight:600;font-size:14px">${esc(c.name || "—")}</div>
-            <div style="font-size:11px;color:var(--text-muted)">${c.id} · ${esc(c.project || "—")}</div>
-          </div>
-          <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;min-width:100px;text-align:right">
-            ${hasPassword ? "✅ Password set" : "⚠️ No password"}
-          </div>
-          <div>${buttonHtml}</div>
-        </div>`;
-    })
-    .join("");
-}
       let passTarget = null;
       function openPassModal(id, name) {
-        passTarget = id;
-        document.getElementById("pass-sub").textContent =
-          `Set login password for ${name} (${id})`;
-        document.getElementById("pass-inp").value = LS.pw[id] || "";
+        passTarget = id.toUpperCase();
+        document.getElementById("pass-sub").textContent = "Set signature key configuration for " + name + " (" + id + ")";
+        document.getElementById("pass-inp").value = LS.pw[passTarget] || "";
         openModal("modal-pass");
       }
-     function confirmPass() {
-  if (!passTarget) return;
-  
-  // Guard clause: If a password already exists, reject any modifications
-  if (LS.pw[passTarget]) {
-    toast("Password has already been set and cannot be altered.", "error");
-    closeModal("modal-pass");
-    return;
-  }
+      function confirmPass() {
+        const p = document.getElementById("pass-inp").value.trim();
+        if (!p) { toast("Provide valid characters", "error"); return; }
+        LS.pw[passTarget] = p;
+        saveLS();
+        closeModal("modal-pass");
+        renderAccess();
+        toast("Password configured.");
+      }
 
-  const p = document.getElementById("pass-inp").value.trim();
-  if (!p) {
-    toast("Enter a password", "error");
-    return;
-  }
-
-  // Save the password strictly on the first attempt
-  LS.pw[passTarget] = p;
-  saveLS();
-  
-  // Close the modal canvas explicitly
-  closeModal("modal-pass");
-  
-  // Refresh the DOM layout immediately to reflect the new lock status
-  renderAccess();
-  toast("Password saved and locked for " + passTarget);
-  
-  // Clear the target to prevent accidental double-execution bugs
-  passTarget = null;
-}
-
-      // ── TABS ──────────────────────────────────────────
       function swTab(name, el, screen, prefix) {
-        document
-          .querySelectorAll(`#${screen} .tab`)
-          .forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll("#" + screen + " .tab").forEach(t => t.classList.remove("active"));
         el.classList.add("active");
-        document
-          .querySelectorAll(`#${screen} .tab-panel`)
-          .forEach((p) => p.classList.remove("active"));
+        document.querySelectorAll("#" + screen + " .tab-panel").forEach(p => p.classList.remove("active"));
         document.getElementById(prefix + name).classList.add("active");
       }
       function resetTabs(screen) {
-        document
-          .querySelectorAll(`#${screen} .tab`)
-          .forEach((t, i) => t.classList.toggle("active", i === 0));
-        document
-          .querySelectorAll(`#${screen} .tab-panel`)
-          .forEach((p, i) => p.classList.toggle("active", i === 0));
+        document.querySelectorAll("#" + screen + " .tab").forEach((t, i) => t.classList.toggle("active", i === 0));
+        document.querySelectorAll("#" + screen + " .tab-panel").forEach((p, i) => p.classList.toggle("active", i === 0));
       }
 
-      // ── MODAL ─────────────────────────────────────────
-      function openModal(id) {
-        document.getElementById(id).classList.add("open");
-      }
-      function closeModal(id) {
-        document.getElementById(id).classList.remove("open");
-      }
-      document.querySelectorAll(".modal-overlay").forEach((el) =>
-        el.addEventListener("click", function (e) {
-          if (e.target === this) this.classList.remove("open");
-        }),
-      );
+      function openModal(id) { document.getElementById(id).classList.add("open"); }
+      function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+      document.querySelectorAll(".modal-overlay").forEach(el => el.addEventListener("click", function (e) { if (e.target === this) this.classList.remove("open"); }));
 
-      // ── TOAST ─────────────────────────────────────────
-      function toast(msg, type = "success") {
-        const t = document.getElementById("toast");
-        t.className = `toast ${type} show`;
+      function toast(msg, type) {
+        const t = document.getElementById("toast"); t.className = "toast " + (type || "success") + " show";
         document.getElementById("tmsg").textContent = msg;
-        clearTimeout(t._t);
-        t._t = setTimeout(() => t.classList.remove("show"), 3200);
+        clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 3200);
       }
 
-      // ── BOOT ──────────────────────────────────────────
-      (async () => {
-        try {
-          await loadSheets();
-        } catch (e) {
-          /* surfaces properly when admin hits reload() */
-        }
-      })();
-    </script>
-  </body>
+      function cardStatusHtml(status) {
+        const m = { active: ["status-active", "● Active"], pending: ["status-pending", "◎ Pending"], completed: ["status-completed", "✓ Done"] };
+        return m[status] || m.pending;
+      }
+
+      // ── RUNTIME INITIALIZATION LIFECYCLE ───────────────
+      window.addEventListener('DOMContentLoaded', function() {
+        loadLS();
+        reload();
+      });
+  </script>
+</body>
+
 </html>
