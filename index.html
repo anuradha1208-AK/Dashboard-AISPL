@@ -51,161 +51,223 @@
       .screen.active {
         display: flex;
       }
-      #screen-login {
-        align-items: center;
-        justify-content: center;
-        background:
-          radial-gradient(
-            ellipse at 30% 20%,
-            rgba(37, 99, 235, 0.15) 0%,
-            transparent 60%
-          ),
-          radial-gradient(
-            ellipse at 70% 80%,
-            rgba(139, 92, 246, 0.1) 0%,
-            transparent 60%
-          ),
-          var(--bg-primary);
-      }
-      .login-box {
-        background: var(--glass);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 48px 40px;
-        width: 100%;
-        max-width: 420px;
-        backdrop-filter: blur(20px);
-        box-shadow: var(--shadow-card), var(--shadow-glow-blue);
-      }
-      .login-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 32px;
-      }
-      .logo-icon {
-        width: 44px;
-        height: 44px;
-        background: linear-gradient(
-          135deg,
-          var(--accent-blue),
-          var(--accent-purple)
-        );
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-      }
-      .login-logo h1 {
-        font-size: 22px;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-      }
-      .login-logo span {
-        font-size: 11px;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        display: block;
-      }
-      .role-tabs {
-        display: flex;
-        background: rgba(255, 255, 255, 0.04);
-        border-radius: 8px;
-        padding: 4px;
-        margin-bottom: 28px;
-        border: 1px solid var(--border);
-      }
-      .role-tab {
-        flex: 1;
-        padding: 8px;
-        border: none;
-        background: transparent;
-        color: var(--text-muted);
-        cursor: pointer;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        transition: all 0.2s;
-        font-family: "Inter", sans-serif;
-      }
-      .role-tab.active {
-        background: var(--accent-blue);
-        color: white;
-      }
-      .form-group {
-        margin-bottom: 16px;
-      }
-      .form-group label {
-        display: block;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--text-secondary);
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-      }
-      .form-group input,
-      .form-group select,
-      .form-group textarea {
-        width: 100%;
-        padding: 12px 14px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text-primary);
-        font-size: 14px;
-        font-family: "Inter", sans-serif;
-        transition: border-color 0.2s;
-        outline: none;
-      }
-      .form-group input:focus,
-      .form-group select:focus,
-      .form-group textarea:focus {
-        border-color: var(--accent-blue);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-      }
-      .form-group select option {
-        background: #132038;
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-family: "Inter", sans-serif;
-      }
-      .btn-primary {
-        background: var(--accent-blue);
-        color: white;
-        width: 100%;
-        margin-top: 8px;
-      }
-      .btn-primary:hover {
-        background: var(--accent-blue-light);
-        transform: translateY(-1px);
-      }
-      .btn-sm {
-        padding: 7px 14px;
-        font-size: 12px;
-        border-radius: 6px;
-      }
-      .btn-ghost {
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-      }
-      .btn-ghost:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
+     :root {
+  /* Brand Core Colors */
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F4F4F4;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFBF7;
+  
+  /* Primary Accent: Logo Orange */
+  --accent-orange: #F3811E;
+  --accent-orange-light: #FF9B42;
+  --accent-orange-glow: rgba(243, 129, 30, 0.15);
+  
+  /* Supporting Accents */
+  --accent-green: #2E7D32;
+  --accent-amber: #ED6C02;
+  --accent-red: #D32F2F;
+  --accent-purple: #7B1FA2;
+  
+  /* Typography & Borders */
+  --text-primary: #121212;
+  --text-secondary: #4A4A4A;
+  --text-muted: #757575;
+  --border: #E0E0E0;
+  --border-accent: rgba(243, 129, 30, 0.4);
+  
+  /* Glassmorphism & Elevation */
+  --glass: rgba(255, 255, 255, 0.92);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-glow-orange: 0 0 20px rgba(243, 129, 30, 0.18);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+/* Updated Screen Login Radial Gradient */
+#screen-login {
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(
+      ellipse at 30% 20%,
+      rgba(243, 129, 30, 0.12) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 70% 80%,
+      rgba(18, 18, 18, 0.05) 0%,
+      transparent 60%
+    ),
+    var(--bg-primary);
+}
+
+.login-box {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card), var(--shadow-glow-orange);
+}
+.login-image img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 15px;
+}
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-orange),
+    var(--accent-orange-light)
+  );
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.login-logo h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.login-logo span {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+}
+
+.role-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+}
+
+.role-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: "Inter", sans-serif;
+}
+
+.role-tab.active {
+  background: var(--accent-orange);
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px var(--accent-orange-glow);
+}
+
+.form-group select option {
+  background: #FFFFFF;
+  color: var(--text-primary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: "Inter", sans-serif;
+}
+
+.btn-primary {
+  background: var(--accent-orange);
+  color: white;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  background: var(--accent-orange-light);
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.btn-ghost {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
       #screen-admin {
         flex-direction: row;
       }
@@ -1106,13 +1168,16 @@
     <!-- LOGIN -->
     <div id="screen-login" class="screen active">
       <div class="login-box">
-        <div class="login-logo">
+        <div class="login-image">
+      <img src="Avaniysh_1-remove.png" alt="Login Graphic" />
+    </div>
+        <!-- <div class="login-logo">
           <div class="logo-icon">⚡</div>
           <div>
             <h1>Dashboard</h1>
             <span></span>
           </div>
-        </div>
+        </div> -->
         <div class="role-tabs">
           <button class="role-tab active" onclick="setRole('admin', this)">
             Admin
@@ -1891,55 +1956,57 @@
           );
         });
       }
+function challanListHtml(challans, opts) {
+  const adminMode = !!(opts && opts.adminMode);
+  if (!challans || !challans.length) {
+    return '<div class="empty-state"><div class="ei">🚚</div><p>No Delivery Challans found for this client.</p></div>';
+  }
 
-      function challanListHtml(challans, opts) {
-        const adminMode = !!(opts && opts.adminMode);
-        if (!challans || !challans.length) {
-          return '<div class="empty-state"><div class="ei">🚚</div><p>No Delivery Challans found for this client.</p></div>';
-        }
+  return challans
+    .map((ch, idx) => {
+      const title =
+        gcol(ch, "Challan No", "ChallanNumber", "Challan #", "Challan", "DC No") ||
+        `Delivery Challan #${idx + 1}`;
+      const date = gcol(ch, "Date", "Challan Date", "DC Date");
+      const link = gcol(ch, "Upload", "Document", "Link", "Challan Copy", "Drive Link", "File", "Challan Link");
+      const docs = extractUploadDocs(link);
 
-        return challans
-          .map((ch, idx) => {
-            const title =
-              gcol(ch, "Challan No", "ChallanNumber", "Challan #", "Challan", "DC No") ||
-              `Delivery Challan #${idx + 1}`;
-            const date = gcol(ch, "Date", "Challan Date", "DC Date");
-            const items = gcol(ch, "Items", "Item Description", "Description", "Particulars");
-            const link = gcol(ch, "Upload", "Document", "Link", "Challan Copy", "Drive Link", "File");
-            const docs = extractUploadDocs(link);
-
-            let docsHtml = "";
-            if (docs.length) {
-              docsHtml = `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${docs
-                .map((d) =>
-                  d.url
-                    ? `<a href="${esc(d.url)}" target="_blank" class="doc-item" style="padding:6px 10px;text-decoration:none"><div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div></div><span class="doc-viewer-badge">↗ View</span></a>`
-                    : `<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px">📄 ${esc(d.name)}</span>`
-                )
-                .join("")}</div>`;
-            }
-
-            // Render details from key-value pairs
-            const detailsGrid = Object.entries(ch)
-              .filter(([k, v]) => v && !k.toLowerCase().includes("upload") && !k.toLowerCase().includes("link"))
-              .map(
-                ([k, v]) =>
-                  `<div style="font-size:12px;margin-bottom:2px"><span style="color:var(--text-muted)">${esc(k)}:</span> <span style="font-weight:500">${esc(v)}</span></div>`
-              )
-              .join("");
-
-            return `<div class="challan-card">
-              <div class="challan-header">
-                <span class="challan-title">📄 ${esc(title)}</span>
-                ${date ? `<span class="challan-date">📅 ${esc(date)}</span>` : ""}
-              </div>
-              <div>${detailsGrid}</div>
-              ${docsHtml}
-            </div>`;
-          })
-          .join("");
+      let docsHtml = "";
+      if (docs.length) {
+        docsHtml = `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">${docs
+          .map((d) =>
+            d.url
+              ? `<a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" class="doc-item" style="padding:6px 10px;text-decoration:none;cursor:pointer"><div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div></div><span class="doc-viewer-badge" style="color:var(--accent-blue-light)">↗ View Document</span></a>`
+              : `<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px">📄 ${esc(d.name)}</span>`
+          )
+          .join("")}</div>`;
       }
 
+      // सर्व मजकुरातील URL शोधून त्यांना क्लिक करता येण्याजोग्या लिंक्स बनवणे
+      const detailsGrid = Object.entries(ch)
+        .filter(([k, v]) => v && !k.toLowerCase().includes("upload") && !k.toLowerCase().includes("link"))
+        .map(([k, v]) => {
+          let valStr = esc(v);
+          // जर व्हॅल्यूमध्ये URL असेल तर त्याला <a> tag मध्ये convert करा
+          if (/^https?:\/\//i.test(v.trim())) {
+            const cleanUrl = resolveDocUrl(v.trim()) || v.trim();
+            valStr = `<a href="${esc(cleanUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue-light);text-decoration:underline">${esc(v)} ↗</a>`;
+          }
+          return `<div style="font-size:12px;margin-bottom:4px"><span style="color:var(--text-muted)">${esc(k)}:</span> <span style="font-weight:500">${valStr}</span></div>`;
+        })
+        .join("");
+
+      return `<div class="challan-card">
+        <div class="challan-header">
+          <span class="challan-title">📄 ${esc(title)}</span>
+          ${date ? `<span class="challan-date">📅 ${esc(date)}</span>` : ""}
+        </div>
+        <div>${detailsGrid}</div>
+        ${docsHtml}
+      </div>`;
+    })
+    .join("");
+}
       // ── DOCUMENT LINK HELPERS ─────────────────────────
       function resolveDocUrl(raw) {
         if (!raw) return "";
