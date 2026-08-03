@@ -1958,11 +1958,25 @@
       }
 function challanListHtml(challans, opts) {
   const adminMode = !!(opts && opts.adminMode);
-  if (!challans || !challans.length) {
+  
+  // Client side sathi Delivery Challans dakhva, fakt Vendor Challan aslele cards hide kara
+  let filteredChallans = challans || [];
+  if (!adminMode) {
+    filteredChallans = filteredChallans.filter((ch) => {
+      const typeVal = (
+        gcol(ch, "Type", "Challan Type", "Category", "Challan") || 
+        ""
+      ).toLowerCase();
+      // Jar explicit Vendor Challan asel tar client side la hide kara
+      return !typeVal.includes("vendor");
+    });
+  }
+
+  if (!filteredChallans.length) {
     return '<div class="empty-state"><div class="ei">🚚</div><p>No Delivery Challans found for this client.</p></div>';
   }
 
-  return challans
+  return filteredChallans
     .map((ch, idx) => {
       const title =
         gcol(ch, "Challan No", "ChallanNumber", "Challan #", "Challan", "DC No") ||
@@ -1982,12 +1996,17 @@ function challanListHtml(challans, opts) {
           .join("")}</div>`;
       }
 
-      // सर्व मजकुरातील URL शोधून त्यांना क्लिक करता येण्याजोग्या लिंक्स बनवणे
+      // Fields display: Client side var 'Vendor' navache kutehi field asel tar te gaala
       const detailsGrid = Object.entries(ch)
-        .filter(([k, v]) => v && !k.toLowerCase().includes("upload") && !k.toLowerCase().includes("link"))
+        .filter(([k, v]) => {
+          if (!v) return false;
+          const kLower = k.toLowerCase();
+          if (kLower.includes("upload") || kLower.includes("link")) return false;
+          if (!adminMode && kLower.includes("vendor")) return false;
+          return true;
+        })
         .map(([k, v]) => {
           let valStr = esc(v);
-          // जर व्हॅल्यूमध्ये URL असेल तर त्याला <a> tag मध्ये convert करा
           if (/^https?:\/\//i.test(v.trim())) {
             const cleanUrl = resolveDocUrl(v.trim()) || v.trim();
             valStr = `<a href="${esc(cleanUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue-light);text-decoration:underline">${esc(v)} ↗</a>`;
