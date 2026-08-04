@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FMS Client Dashboard</title>
+    <title>Client Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -2042,78 +2042,54 @@ function challanListHtml(challans, opts) {
         return "";
       }
 
-      function extractUploadDocs(upload) {
-        if (!upload) return [];
-        const docs = [];
-        const seenUrls = new Set();
+function extractUploadDocs(upload) {
+  if (!upload) return [];
+  const docs = [];
+  const seenUrls = new Set();
 
-        const urlRegex = /https?:\/\/\S+/g;
-        const segments = [];
-        let match, lastIndex = 0;
-        while ((match = urlRegex.exec(upload)) !== null) {
-          const url = match[0].replace(/[)\]"'.,]+$/, "");
-          segments.push({
-            textBefore: upload.slice(lastIndex, match.index),
-            url,
-          });
-          lastIndex = match.index + match[0].length;
-        }
-        const tail = upload.slice(lastIndex);
-        let tailConsumedAsName = false;
+  // URL शोधण्यासाठी Regex
+  const urlRegex = /(https?:\/\/[^\s"'<>,;]+)/gi;
+  let match;
+  let lastIndex = 0;
 
-        segments.forEach((seg, idx) => {
-          if (seenUrls.has(seg.url)) return;
-          seenUrls.add(seg.url);
-          let name = seg.textBefore
-            .split("\n")
-            .pop()
-            .replace(/^[\s,;]+/, "")
-            .replace(/[\s,;:-]+$/, "")
-            .trim();
-          if (!name && idx === segments.length - 1) {
-            const afterText = tail.trim();
-            if (afterText && !/^https?:\/\//i.test(afterText)) {
-              const cleaned = afterText.replace(/^[\s,;:-]+/, "").trim();
-              if (cleaned) {
-                name = cleaned;
-                tailConsumedAsName = true;
-              }
-            }
-          }
-          if (!name) name = "View document";
-          docs.push({ name, url: resolveDocUrl(seg.url) || seg.url });
-        });
+  while ((match = urlRegex.exec(upload)) !== null) {
+    let rawUrl = match[1].replace(/[)\]"'.,]+$/, ""); 
+    const cleanUrl = resolveDocUrl(rawUrl) || rawUrl;
 
-        const remainder = (
-          segments.length ? (tailConsumedAsName ? "" : tail) : upload
-        ).trim();
-        remainder
-          .split(/[\n,]+/)
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .forEach((part) => {
-            if (/^[a-zA-Z0-9_-]{25,44}$/.test(part)) {
-              docs.push({
-                name: "View document",
-                url: `https://drive.google.com/file/d/${part}/view`,
-              });
-              return;
-            }
-            const fileTokens =
-              part.match(/[\w\s\-\(\)\/\.]+?\.[a-zA-Z]{2,5}/g) || [];
-            if (fileTokens.length) {
-              fileTokens.forEach((f) => {
-                const fname = f.trim();
-                if (fname) docs.push({ name: fname, url: "" });
-              });
-            } else {
-              docs.push({ name: part, url: "" });
-            }
-          });
+    if (!seenUrls.has(cleanUrl)) {
+      seenUrls.add(cleanUrl);
 
-        return docs;
+      // लिंकच्या आधीचा मजकूर (म्हणजेच फाईलचे नाव) काढणे
+      const textBefore = upload.slice(lastIndex, match.index);
+      let fileName = textBefore
+        .split(/[\n,;]+/)
+        .pop()
+        .replace(/^[\s,;:-]+/, "")
+        .replace(/[\s,;:-]+$/, "")
+        .trim();
+
+      // जर लिंकच्या आधी नाव नसेल तरच फॉलबॅक नाव वापरणे
+      if (!fileName || fileName.toLowerCase().startsWith("http")) {
+        fileName = "View Document";
       }
 
+      docs.push({ name: fileName, url: cleanUrl });
+    }
+    lastIndex = match.index + match[0].length;
+  }
+
+  // जर फक्त टेक्स्ट/नाव लिहिले असेल आणि लिंक नसेल
+  if (docs.length === 0 && upload.trim()) {
+    upload.split(/[\n,;]+/).forEach((line) => {
+      const trimmed = line.trim();
+      if (trimmed) {
+        docs.push({ name: trimmed, url: "" });
+      }
+    });
+  }
+
+  return docs;
+}
       // ── COLUMN LOOKUP ─────────────────────────────────
       function gcol(obj, ...keys) {
         for (const k of keys) {
@@ -2314,16 +2290,21 @@ function challanListHtml(challans, opts) {
               ? `<div style="margin-top:6px;font-size:12px;color:var(--text-secondary);background:rgba(255,255,255,.03);border-radius:6px;padding:6px 8px;border-left:2px solid var(--accent-blue)">💬 ${esc(s.note)}</div>`
               : "";
             const docHtml =
-              s.docs && s.docs.length
-                ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">${s.docs
-                    .filter((d) => d.name)
-                    .map((d) =>
-                      d.url
-                        ? `<a href="${esc(d.url)}" target="_blank" class="doc-item" style="padding:6px 10px;max-width:300px;text-decoration:none"><div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px">📄</div><div class="doc-info"><div class="doc-name">${esc(d.name)}</div></div><span class="doc-viewer-badge">↗</span></a>`
-                        : `<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;display:inline-flex;align-items:center;gap:4px">📄 ${esc(d.name)}</span>`,
-                    )
-                    .join("")}</div>`
-                : "";
+  s.docs && s.docs.length
+    ? `<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">${s.docs
+        .map((d, dIdx) =>
+          d.url
+            ? `<a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" class="doc-item" style="padding:6px 10px;text-decoration:none;display:flex;align-items:center;gap:8px">
+                <div class="doc-icon" style="background:rgba(37,99,235,.1);width:28px;height:28px;font-size:13px;flex-shrink:0">📄</div>
+                <div class="doc-info" style="flex:1;overflow:hidden">
+                  <div class="doc-name" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.name)} ${s.docs.length > 1 ? `#${dIdx + 1}` : ''}</div>
+                </div>
+                <span class="doc-viewer-badge" style="color:var(--accent-blue-light);flex-shrink:0">↗ Open Link</span>
+              </a>`
+            : `<span style="font-size:11px;color:var(--text-muted);padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;display:inline-flex;align-items:center;gap:4px">📄 ${esc(d.name)}</span>`
+        )
+        .join("")}</div>`
+    : "";
             return `<div class="fms-timeline-item">
       <div class="fms-dot ${dc}">${icon}</div>
       <div class="fms-content ${cc}">
